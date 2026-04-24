@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authority Dashboard - Islamabad Real Estate Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" style="padding: 15px 0;">
+        <div class="container" style="max-width: 100%; padding: 0 40px;">
+            <a href="index.html" class="logo">Islamabad Real Estate Management System <span class="text-gold">.</span></a>
+            <div class="nav-links">
+                <span class="text-light">Role: City Authority</span>
+                <a href="login.html" class="btn btn-outline" style="padding: 8px 15px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <a href="#" class="active">Overview</a>
+                <a href="#">Sector Management</a>
+                <a href="#">Bidding Oversight</a>
+                <a href="#">Compliance Reports</a>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-header">
+                <h2>City Real Estate Authority Control Panel</h2>
+                <button class="btn btn-primary" onclick="alert('Generating PDF Report...')">Generate Report</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px;">
+                <div class="property-card" style="padding: 20px; background: var(--bg-dark); color: white;">
+                    <h3 style="color: var(--primary-gold); font-size: 16px;">Sectors Near Capacity</h3>
+                    <div style="font-size: 36px; font-weight: 700;">2</div>
+                    <p style="font-size: 12px; color: #aaa;">F-8, G-11</p>
+                </div>
+                <div class="property-card" style="padding: 20px;">
+                    <h3 style="color: var(--text-muted); font-size: 16px;">Active Auctions Monitored</h3>
+                    <div style="font-size: 36px; font-weight: 700;">128</div>
+                </div>
+                <div class="property-card" style="padding: 20px;">
+                    <h3 style="color: var(--text-muted); font-size: 16px;">Flagged Transactions</h3>
+                    <div style="font-size: 36px; color: red; font-weight: 700;">0</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 20px;">Sector Capacity Management</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sector ID</th>
+                            <th>Zone Type</th>
+                            <th>Current Load</th>
+                            <th>Capacity Limit</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sector F-8</td>
+                            <td>Residential/Commercial</td>
+                            <td>98%</td>
+                            <td>100%</td>
+                            <td><span style="color: red; font-weight: bold;">Overloaded</span></td>
+                            <td><button class="btn btn-dark" style="padding: 5px 10px; font-size: 12px;">Freeze Sector</button></td>
+                        </tr>
+                        <tr>
+                            <td>Sector E-7</td>
+                            <td>Residential</td>
+                            <td>65%</td>
+                            <td>100%</td>
+                            <td><span style="color: green;">Normal</span></td>
+                            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px;">Edit Limit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

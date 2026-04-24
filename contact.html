@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | IRMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        .contact-header {
+            padding: 60px 0;
+            background-color: var(--bg-darker);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-gold);
+        }
+        .contact-header h1 {
+            font-size: 40px;
+            color: var(--primary-gold);
+        }
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 50px;
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .contact-info {
+            background: var(--bg-off-white);
+            padding: 40px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-gold);
+        }
+        .contact-info h3 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: var(--bg-dark);
+        }
+        .info-item {
+            margin-bottom: 25px;
+        }
+        .info-item h5 {
+            color: var(--primary-gold-dark);
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        .info-item p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background-color: var(--bg-dark);
+            color: var(--primary-gold);
+            border: 2px solid var(--primary-gold);
+            border-radius: 50px;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        .social-btn:hover {
+            background-color: var(--primary-gold);
+            color: var(--bg-dark);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.4);
+        }
+        .contact-form {
+            background: var(--bg-light);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+        .contact-form h3 {
+            margin-bottom: 25px;
+            font-size: 28px;
+            color: var(--bg-dark);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Islamabad Real Estate Management System</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="properties.html">Properties</a>
+                <a href="about.html">About</a>
+                <a href="contact.html" style="color: var(--primary-gold);">Contact</a>
+                <a href="login.html" class="btn btn-primary">Login</a>
+                <a href="register.html" class="btn btn-outline">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="contact-header">
+        <div class="container">
+            <h1 data-aos="fade-up">Get in Touch</h1>
+            <p style="color: var(--text-muted); margin-top: 10px;" data-aos="fade-up" data-aos-delay="200">We are here to assist you with all your real estate needs.</p>
+        </div>
+    </div>
+
+    <div class="contact-container">
+        <div class="contact-info" data-aos="fade-right">
+            <h3>Head Office Details</h3>
+            
+            <div class="info-item">
+                <h5>Official Address</h5>
+                <p>IRMS Tower, Main Nazim-ud-din Road<br>Sector F-8 Markaz, Islamabad 44000<br>Pakistan</p>
+            </div>
+            
+            <div class="info-item">
+                <h5>Phone Numbers</h5>
+                <p>UAN: <strong>+92 (51) 111-222-333</strong></p>
+                <p>Support Line: <strong>+92 (51) 281-9999</strong></p>
+            </div>
+            
+            <div class="info-item">
+                <h5>Email Addresses</h5>
+                <p>General Inquiries: <strong>info@irms.gov.pk</strong></p>
+                <p>Support & Complaints: <strong>support@irms.gov.pk</strong></p>
+                <p>Agent Licensing: <strong>agents@irms.gov.pk</strong></p>
+            </div>
+            
+            <div style="margin-top: 40px;">
+                <h5>Connect With Us</h5>
+                <div class="social-links">
+                    <a href="https://wa.me/923000000000" target="_blank" class="social-btn" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://facebook.com" target="_blank" class="social-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://instagram.com" target="_blank" class="social-btn" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://twitter.com" target="_blank" class="social-btn" title="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://linkedin.com" target="_blank" class="social-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form" data-aos="fade-left" data-aos-delay="200">
+            <h3>Send us a Message</h3>
+            <form>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-control" placeholder="Enter your official name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" class="form-control" placeholder="What is this regarding?">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea class="form-control" rows="6" placeholder="Write your detailed message here..."></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" style="width: 100%;">Submit Message</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>Islamabad Real Estate Management System</h3>
+                    <p>The first official online real estate management and bidding system for Islamabad.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="properties.html">Properties</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">City Authority Rules</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Islamabad Real Estate Management System. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({duration: 1000, once: true});</script>
+</body>
+</html>
