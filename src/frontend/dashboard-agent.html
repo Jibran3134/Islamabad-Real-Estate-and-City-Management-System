@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard - Islamabad Real Estate Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" style="padding: 15px 0;">
+        <div class="container" style="max-width: 100%; padding: 0 40px;">
+            <a href="index.html" class="logo">Islamabad Real Estate Management System <span class="text-gold">.</span></a>
+            <div class="nav-links">
+                <span class="text-light">Agent: Property Masters Ltd.</span>
+                <a href="login.html" class="btn btn-outline" style="padding: 8px 15px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <a href="#" class="active">Dashboard Overview</a>
+                <a href="#">My Listings</a>
+                <a href="#">Add New Listing</a>
+                <a href="#">Active Auctions</a>
+                <a href="#">Sales History</a>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-header">
+                <h2>Real Estate Agent Dashboard</h2>
+                <button class="btn btn-primary" onclick="alert('Opening Add Property Form...')">+ Add New Listing</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px;">
+                <div class="property-card" style="padding: 20px; text-align: center;">
+                    <h3 style="color: var(--text-muted); font-size: 14px;">Total Listings</h3>
+                    <div style="font-size: 30px; font-weight: 700;">45</div>
+                </div>
+                <div class="property-card" style="padding: 20px; text-align: center;">
+                    <h3 style="color: var(--text-muted); font-size: 14px;">Active Biddings</h3>
+                    <div style="font-size: 30px; color: var(--primary-gold); font-weight: 700;">8</div>
+                </div>
+                <div class="property-card" style="padding: 20px; text-align: center;">
+                    <h3 style="color: var(--text-muted); font-size: 14px;">Properties Sold</h3>
+                    <div style="font-size: 30px; font-weight: 700;">12</div>
+                </div>
+                <div class="property-card" style="padding: 20px; text-align: center;">
+                    <h3 style="color: var(--text-muted); font-size: 14px;">Total Revenue</h3>
+                    <div style="font-size: 20px; font-weight: 700; margin-top: 10px;">PKR 850 Cr</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 20px;">My Recent Listings</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Sector</th>
+                            <th>Sale Method</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#PR-1029</td>
+                            <td>Luxury Villa</td>
+                            <td>F-11</td>
+                            <td>Bidding</td>
+                            <td><span style="color: var(--primary-gold);">Active Auction</span></td>
+                            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px;">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>#PR-1030</td>
+                            <td>Commercial Plot</td>
+                            <td>D-12</td>
+                            <td>Fixed Price</td>
+                            <td><span style="color: green;">Available</span></td>
+                            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px;">Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

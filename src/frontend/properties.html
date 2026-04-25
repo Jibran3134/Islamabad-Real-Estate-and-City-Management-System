@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties - Islamabad Real Estate Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-off-white">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Islamabad Real Estate Management System <span class="text-gold">.</span></a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="properties.html" style="color: var(--primary-gold);">Properties</a>
+                <a href="login.html" class="btn btn-outline">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 40px 20px;">
+        <h1 class="section-title" style="text-align: left; margin-bottom: 20px;">Property Listings</h1>
+        
+        <!-- Search and Filter Bar -->
+        <div class="search-container" style="margin: 0 0 40px 0; max-width: 100%;">
+            <input type="text" placeholder="Search...">
+            <select>
+                <option value="">Sector</option>
+                <option value="F-8">F-8</option>
+                <option value="F-11">F-11</option>
+            </select>
+            <select>
+                <option value="">Property Type</option>
+                <option value="House">House</option>
+                <option value="Commercial">Commercial</option>
+            </select>
+            <select>
+                <option value="">Sale Type</option>
+                <option value="bidding">Live Bidding</option>
+                <option value="fixed">Fixed Price</option>
+            </select>
+            <button class="btn btn-primary">Filter</button>
+        </div>
+
+        <div class="property-grid">
+            <!-- Property 1 -->
+            <div class="property-card">
+                <div class="property-img" style="background-image: url('images/luxury.png');">
+                    <span class="badge">Live Bidding</span>
+                </div>
+                <div class="property-content">
+                    <div class="property-price">PKR 8.5 Crore</div>
+                    <h3 class="property-title">Luxury Villa in F-11</h3>
+                    <div class="property-location">Sector F-11, Islamabad</div>
+                    <a href="property-details.html" class="btn btn-outline" style="width: 100%; margin-top: 20px; text-align: center;">View & Bid</a>
+                </div>
+            </div>
+            
+            <!-- Add more property cards as needed -->
+            <div class="property-card">
+                <div class="property-img" style="background-image: url('images/modern.png');">
+                    <span class="badge" style="background: #333; color: white;">Fixed Price</span>
+                </div>
+                <div class="property-content">
+                    <div class="property-price">PKR 12 Crore</div>
+                    <h3 class="property-title">Modern Design House</h3>
+                    <div class="property-location">Sector E-7, Islamabad</div>
+                    <a href="property-details.html" class="btn btn-outline" style="width: 100%; margin-top: 20px; text-align: center;">View Details</a>
+                </div>
+            </div>
+            
+            <!-- Add more property cards as needed -->
+            <div class="property-card">
+                <div class="property-img" style="background-image: url('images/spanish.png');">
+                    <span class="badge">Live Bidding</span>
+                </div>
+                <div class="property-content">
+                    <div class="property-price">PKR 4 Crore</div>
+                    <h3 class="property-title">Apartment Complex</h3>
+                    <div class="property-location">Sector D-12, Islamabad</div>
+                    <a href="property-details.html" class="btn btn-outline" style="width: 100%; margin-top: 20px; text-align: center;">View & Bid</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
