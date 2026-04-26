@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Islamabad Real Estate Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" style="padding: 15px 0;">
+        <div class="container" style="max-width: 100%; padding: 0 40px;">
+            <a href="index.html" class="logo">Islamabad Real Estate Management System <span class="text-gold">.</span></a>
+            <div class="nav-links">
+                <span class="text-light">System Administrator</span>
+                <a href="login.html" class="btn btn-outline" style="padding: 8px 15px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <a href="#" class="active">System Health</a>
+                <a href="#">User Management</a>
+                <a href="#">Database Backups</a>
+                <a href="#">Security Logs</a>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-header">
+                <h2>System Administrator Dashboard</h2>
+                <button class="btn btn-primary" onclick="alert('Creating User...')">+ Add New User</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px;">
+                <div class="property-card" style="padding: 20px;">
+                    <h3 style="color: var(--text-muted); font-size: 14px;">Total Users</h3>
+                    <div style="font-size: 30px; font-weight: 700;">14,029</div>
+                </div>
+                <div class="property-card" style="padding: 20px;">
+                    <h3 style="color: var(--text-muted); font-size: 14px;">Server Uptime</h3>
+                    <div style="font-size: 30px; color: green; font-weight: 700;">99.9%</div>
+                </div>
+                <div class="property-card" style="padding: 20px;">
+                    <h3 style="color: var(--text-muted); font-size: 14px;">Database Size</h3>
+                    <div style="font-size: 30px; font-weight: 700;">4.2 GB</div>
+                </div>
+                <div class="property-card" style="padding: 20px;">
+                    <h3 style="color: var(--text-muted); font-size: 14px;">Last Backup</h3>
+                    <div style="font-size: 20px; font-weight: 700; margin-top: 10px;">Today, 02:00 AM</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 20px;">Recent User Registrations</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#USR-9982</td>
+                            <td>Ahmed Khan</td>
+                            <td>ahmed@email.com</td>
+                            <td><span class="badge" style="position: static; padding: 3px 8px; font-size: 10px;">Buyer</span></td>
+                            <td>Active</td>
+                            <td><button class="btn btn-outline" style="padding: 3px 8px; font-size: 12px;">Manage</button></td>
+                        </tr>
+                        <tr>
+                            <td>#USR-9983</td>
+                            <td>Property Masters</td>
+                            <td>contact@pm.com</td>
+                            <td><span class="badge" style="position: static; padding: 3px 8px; font-size: 10px; background: var(--bg-dark); color: var(--primary-gold);">Agent</span></td>
+                            <td>Pending Approval</td>
+                            <td>
+                                <button class="btn btn-primary" style="padding: 3px 8px; font-size: 12px;">Approve</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
