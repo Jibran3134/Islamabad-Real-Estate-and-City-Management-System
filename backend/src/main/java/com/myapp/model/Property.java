@@ -5,53 +5,48 @@ import java.time.LocalDateTime;
 
 /**
  * MODEL: Represents a property listing in the system.
- * Maps to the 'properties' table in the database.
+ * Maps to the 'Property' table in the database.
  *
- * Types: house, apartment, plot, commercial, farmhouse
- * Status: available, sold, pending, auction
+ * Used in:
+ *   UC3 – Add Property Listing
+ *   UC4 – Search Property Based on Filters
+ *   UC5 – Modify Property Details
+ *
+ * Property types: Residential | Commercial | Industrial
+ * Listing status: For Sale | Sold | Pending
+ * Selling method: Fixed Price | Bidding
  */
 public class Property {
 
     private int propertyId;
+    private int sectorId;              // FK → Sector.sector_id
+    private int agentId;               // FK → Users.user_id (agent role)
     private String title;
     private String description;
-    private String propertyType;   // house | apartment | plot | commercial | farmhouse
-    private String sector;
-    private String address;
-    private String city;
-    private double areaSqft;
     private BigDecimal price;
-    private int bedrooms;
-    private int bathrooms;
-    private String status;         // available | sold | pending | auction
-    private int listedBy;          // FK → users.user_id
+    private String propertyType;       // Residential | Commercial | Industrial
+    private String location;           // street/area location within the sector
+    private String listingStatus;      // For Sale | Sold | Pending
+    private String sellingMethod;      // Fixed Price | Bidding
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     // ── Constructors ──────────────────────────────────────────────────
 
-    public Property() {
-        this.city = "Islamabad";
-        this.status = "available";
-    }
+    public Property() {}
 
-    public Property(String title, String description, String propertyType, String sector,
-                    String address, double areaSqft, BigDecimal price, int bedrooms,
-                    int bathrooms, int listedBy) {
+    public Property(int sectorId, int agentId, String title, String description,
+                    BigDecimal price, String propertyType, String location,
+                    String listingStatus, String sellingMethod) {
+        this.sectorId = sectorId;
+        this.agentId = agentId;
         this.title = title;
         this.description = description;
-        this.propertyType = propertyType;
-        this.sector = sector;
-        this.address = address;
-        this.city = "Islamabad";
-        this.areaSqft = areaSqft;
         this.price = price;
-        this.bedrooms = bedrooms;
-        this.bathrooms = bathrooms;
-        this.status = "available";
-        this.listedBy = listedBy;
+        this.propertyType = propertyType;
+        this.location = location;
+        this.listingStatus = listingStatus;
+        this.sellingMethod = sellingMethod;
         this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
     // ── Getters & Setters ─────────────────────────────────────────────
@@ -59,57 +54,46 @@ public class Property {
     public int getPropertyId() { return propertyId; }
     public void setPropertyId(int propertyId) { this.propertyId = propertyId; }
 
+    public int getSectorId() { return sectorId; }
+    public void setSectorId(int sectorId) { this.sectorId = sectorId; }
+
+    public int getAgentId() { return agentId; }
+    public void setAgentId(int agentId) { this.agentId = agentId; }
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getPropertyType() { return propertyType; }
-    public void setPropertyType(String propertyType) { this.propertyType = propertyType; }
-
-    public String getSector() { return sector; }
-    public void setSector(String sector) { this.sector = sector; }
-
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
-
-    public double getAreaSqft() { return areaSqft; }
-    public void setAreaSqft(double areaSqft) { this.areaSqft = areaSqft; }
-
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
 
-    public int getBedrooms() { return bedrooms; }
-    public void setBedrooms(int bedrooms) { this.bedrooms = bedrooms; }
+    public String getPropertyType() { return propertyType; }
+    public void setPropertyType(String propertyType) { this.propertyType = propertyType; }
 
-    public int getBathrooms() { return bathrooms; }
-    public void setBathrooms(int bathrooms) { this.bathrooms = bathrooms; }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getListingStatus() { return listingStatus; }
+    public void setListingStatus(String listingStatus) { this.listingStatus = listingStatus; }
 
-    public int getListedBy() { return listedBy; }
-    public void setListedBy(int listedBy) { this.listedBy = listedBy; }
+    public String getSellingMethod() { return sellingMethod; }
+    public void setSellingMethod(String sellingMethod) { this.sellingMethod = sellingMethod; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     @Override
     public String toString() {
         return "Property{" +
                 "propertyId=" + propertyId +
+                ", sectorId=" + sectorId +
                 ", title='" + title + '\'' +
                 ", type='" + propertyType + '\'' +
-                ", sector='" + sector + '\'' +
                 ", price=" + price +
-                ", status='" + status + '\'' +
+                ", listingStatus='" + listingStatus + '\'' +
+                ", sellingMethod='" + sellingMethod + '\'' +
                 '}';
     }
 }

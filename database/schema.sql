@@ -31,6 +31,7 @@ CREATE TABLE Property (
                           description TEXT,
                           price DECIMAL(12,2),
                           property_type VARCHAR(30),
+                          location VARCHAR(200),
                           listing_status VARCHAR(20),
                           selling_method VARCHAR(20),
                           created_at DATETIME,
@@ -59,6 +60,17 @@ CREATE TABLE Bid (
                      bid_time DATETIME,
                      FOREIGN KEY (session_id) REFERENCES Bidding_Session(session_id),
                      FOREIGN KEY (buyer_id) REFERENCES Users(user_id)
+);
+
+CREATE TABLE Activity_Log (
+                              log_id INT PRIMARY KEY IDENTITY(1,1),
+                              user_id INT,
+                              action VARCHAR(100),
+                              entity_type VARCHAR(50),
+                              entity_id INT,
+                              timestamp DATETIME DEFAULT GETDATE(),
+                              details TEXT,
+                              FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 
@@ -121,14 +133,5 @@ INSERT INTO Users (role_id, full_name, email, password_hash, status, phone_numbe
 
 -- Property (IDENTITY — omit property_id, auto-generates 1, 2)
 INSERT INTO Property (sector_id, agent_id, title, description, price, property_type, listing_status, selling_method, created_at) VALUES
-    (6, 3, 'House in F-6', '5 Marla house with 3 beds',  15000000.00, 'Residential', 'For Sale', 'Fixed Price', '2026-01-10 09:00:00'),
-    (7, 3, 'Plot in F-7',  '10 Marla residential plot',  22000000.00, 'Residential', 'For Sale', 'Bidding',     '2026-01-15 10:00:00');
-
--- Bidding_Session (IDENTITY — omit session_id, auto-generates 1)
-INSERT INTO Bidding_Session (property_id, base_price, deadline, status, winner_id, winning_bid_amount, current_highest_bid) VALUES
-    (2, 22000000.00, '2026-04-30 18:00:00', 'Active', NULL, NULL, 22000000.00);
-
--- Bid (IDENTITY — omit bid_id, auto-generates 1, 2)
-INSERT INTO Bid (session_id, buyer_id, bid_amount, bid_time) VALUES
-    (1, 5, 22500000.00, '2026-04-20 10:15:00'),
-    (1, 6, 23000000.00, '2026-04-21 11:30:00');
+    (6, 1, 'House in F-6', '5 Marla house with 3 beds',  15000000.00, 'Residential', 'For Sale', 'Fixed Price', '2026-01-10 09:00:00'),
+    (5, 2, 'Plot in F-7',  '10 Marla residential plot',  22000000.00, 'Residential', 'For Sale', 'Bidding',     '2026-01-15 10:00:00');

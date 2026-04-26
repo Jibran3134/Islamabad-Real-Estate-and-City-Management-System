@@ -4,30 +4,30 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * MODEL: Represents a bid placed on a property.
- * Maps to the 'bids' table in the database.
+ * MODEL: Represents a single bid placed by a buyer during a bidding session.
+ * Maps to the 'Bid' table in the database.
  *
- * Status: active, accepted, rejected, withdrawn
+ * Used in:
+ *   UC6 – Place Bid on Property
+ *   UC9 – Declare Winning Bidder
  */
 public class Bid {
 
     private int bidId;
-    private int propertyId;
-    private int bidderId;
+    private int sessionId;             // FK → Bidding_Session.session_id
+    private int buyerId;               // FK → Users.user_id (buyer role)
     private BigDecimal bidAmount;
-    private String bidStatus;      // active | accepted | rejected | withdrawn
-    private LocalDateTime createdAt;
+    private LocalDateTime bidTime;
 
     // ── Constructors ──────────────────────────────────────────────────
 
     public Bid() {}
 
-    public Bid(int propertyId, int bidderId, BigDecimal bidAmount) {
-        this.propertyId = propertyId;
-        this.bidderId = bidderId;
+    public Bid(int sessionId, int buyerId, BigDecimal bidAmount) {
+        this.sessionId = sessionId;
+        this.buyerId = buyerId;
         this.bidAmount = bidAmount;
-        this.bidStatus = "active";
-        this.createdAt = LocalDateTime.now();
+        this.bidTime = LocalDateTime.now();
     }
 
     // ── Getters & Setters ─────────────────────────────────────────────
@@ -35,29 +35,26 @@ public class Bid {
     public int getBidId() { return bidId; }
     public void setBidId(int bidId) { this.bidId = bidId; }
 
-    public int getPropertyId() { return propertyId; }
-    public void setPropertyId(int propertyId) { this.propertyId = propertyId; }
+    public int getSessionId() { return sessionId; }
+    public void setSessionId(int sessionId) { this.sessionId = sessionId; }
 
-    public int getBidderId() { return bidderId; }
-    public void setBidderId(int bidderId) { this.bidderId = bidderId; }
+    public int getBuyerId() { return buyerId; }
+    public void setBuyerId(int buyerId) { this.buyerId = buyerId; }
 
     public BigDecimal getBidAmount() { return bidAmount; }
     public void setBidAmount(BigDecimal bidAmount) { this.bidAmount = bidAmount; }
 
-    public String getBidStatus() { return bidStatus; }
-    public void setBidStatus(String bidStatus) { this.bidStatus = bidStatus; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getBidTime() { return bidTime; }
+    public void setBidTime(LocalDateTime bidTime) { this.bidTime = bidTime; }
 
     @Override
     public String toString() {
         return "Bid{" +
                 "bidId=" + bidId +
-                ", propertyId=" + propertyId +
-                ", bidderId=" + bidderId +
+                ", sessionId=" + sessionId +
+                ", buyerId=" + buyerId +
                 ", amount=" + bidAmount +
-                ", status='" + bidStatus + '\'' +
+                ", bidTime=" + bidTime +
                 '}';
     }
 }
