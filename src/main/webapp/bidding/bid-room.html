@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Bid - IRMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .bidding-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 30px;
+            border-top: 4px solid var(--primary-gold);
+        }
+        .bid-timer {
+            font-size: 24px;
+            font-weight: 700;
+            color: red;
+            margin: 10px 0;
+        }
+        .bid-status-closed {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        .bid-history {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .bid-history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f9f9f9;
+        }
+    </style>
+</head>
+<body class="bg-off-white">
+    <nav class="navbar">
+        <div class="container">
+            <a href="../index.html" class="logo">Islamabad Real Estate Management System <span class="text-gold">.</span></a>
+            <div class="nav-links">
+                <a href="../index.html">Dashboard</a>
+                <a href="property/search-property.html">Properties</a>
+                <a href="../index.html" class="btn btn-outline">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 40px 20px; max-width: 900px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 class="section-title" style="text-align: left; margin: 0;">Luxury Villa - F-7/2</h1>
+            <span class="badge" style="background: var(--bg-dark); color: var(--primary-gold);">Active Auction</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div>
+                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800" alt="Villa F-7" style="width: 100%; border-radius: 8px;">
+                <h3 style="margin-top: 20px;">Property Details</h3>
+                <p>A beautiful 5-bedroom luxury villa located in the heart of F-7. Features include a private pool, modern kitchen, and servant quarters.</p>
+            </div>
+
+            <div>
+                <div class="bidding-section">
+                    <h3>Current Auction</h3>
+                    <div style="margin: 20px 0;">
+                        <span style="color: var(--text-muted);">Current Highest Bid</span>
+                        <div style="font-size: 32px; font-weight: 700; color: var(--primary-gold);" id="highestBidDisplay">Rs. 85,000,000</div>
+                    </div>
+                    
+                    <div>
+                        <span style="color: var(--text-muted);">Time Remaining (UC8 Logic)</span>
+                        <div class="bid-timer" id="countdownTimer">00:05:30</div>
+                    </div>
+
+                    <div id="activeBiddingArea" style="margin-top: 30px;">
+                        <label>Your Bid Amount (Rs.)</label>
+                        <input type="number" id="bidAmountInput" style="width: 100%; padding: 12px; margin-top: 5px; font-size: 16px;" placeholder="Enter amount greater than current bid">
+                        <button class="btn btn-primary" id="placeBidBtn" style="width: 100%; margin-top: 15px; font-size: 16px;">Place Bid</button>
+                    </div>
+
+                    <!-- Displayed when bidding closes (UC8 & UC9) -->
+                    <div id="biddingClosedArea" class="bid-status-closed">
+                        <h4 style="margin:0 0 10px 0;">Bidding Closed (UC8)</h4>
+                        <p style="margin:0;">The auction has ended.</p>
+                        <hr style="border-top:1px solid #f5c6cb; margin: 15px 0;">
+                        <h4 style="margin:0 0 5px 0;">Winner Declared (UC9)</h4>
+                        <p style="margin:0; font-weight: bold;">Winner: User #B-4092 (Rs. <span id="winningBidAmount">85,000,000</span>)</p>
+                    </div>
+
+                    <div class="bid-history">
+                        <h4>Recent Bids</h4>
+                        <div id="bidHistoryList">
+                            <div class="bid-history-item">
+                                <span>User #B-4092</span>
+                                <strong>Rs. 85,000,000</strong>
+                            </div>
+                            <div class="bid-history-item">
+                                <span>User #B-1021</span>
+                                <strong>Rs. 84,500,000</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/bid.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freeze Sector - Authority</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-off-white">
+    <nav class="navbar" style="padding: 15px 0;">
+        <div class="container" style="max-width: 100%; padding: 0 40px;">
+            <a href="../index.html" class="logo">IRMS <span class="text-gold">.</span></a>
+            <div class="nav-links">
+                <span class="text-light">City Authority</span>
+                <a href="../index.html" class="btn btn-outline">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <a href="../index.html">Overview</a>
+                <a href="sector-capacity.html">Capacity Limits</a>
+                <a href="freeze-sector.html" class="active">Freeze Sector (UC2)</a>
+            </div>
+        </div>
+        <div class="dashboard-content">
+            <div class="dashboard-header">
+                <h2>Freeze Overloaded Sector</h2>
+            </div>
+            <div class="table-container" style="margin-top: 20px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sector Name</th>
+                            <th>Current Listings</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="freezeTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="../js/utils.js"></script>
+    <script src="../js/sector.js"></script>
+</body>
+</html>

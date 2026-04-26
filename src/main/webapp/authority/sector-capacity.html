@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sector Management - Authority</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .sector-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .frozen-sector {
+            border-left: 4px solid red;
+            opacity: 0.8;
+        }
+        .active-sector {
+            border-left: 4px solid green;
+        }
+    </style>
+</head>
+<body class="bg-off-white">
+    <nav class="navbar" style="padding: 15px 0;">
+        <div class="container" style="max-width: 100%; padding: 0 40px;">
+            <a href="../index.html" class="logo">Islamabad Real Estate Management System <span class="text-gold">.</span></a>
+            <div class="nav-links">
+                <span class="text-light">City Authority</span>
+                <a href="../index.html" class="btn btn-outline" style="padding: 8px 15px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <a href="../index.html">Overview</a>
+                <a href="authority-sector-management.html" class="active">Sector Management</a>
+                <a href="#">Zoning Approvals</a>
+                <a href="#">Regulatory Reports</a>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-header">
+                <h2>Sector Management & Regulations</h2>
+                <button class="btn btn-primary" id="addSectorBtn">+ Add New Sector</button>
+            </div>
+
+            <p style="margin-bottom: 20px; color: var(--text-muted);">Implement regulatory controls: Define capacity limits (UC1) and Freeze overloaded sectors (UC2).</p>
+
+            <div id="sectorsContainer" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Sector Edit/Limits (UC1) -->
+    <div id="sectorModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+        <div class="modal-content" style="background:#fff; margin:10% auto; padding:20px; width:40%; border-radius:5px;">
+            <h3 id="modalTitle">Define Sector Limits</h3>
+            <form id="sectorForm">
+                <div style="margin-bottom: 15px;">
+                    <label>Sector Name</label>
+                    <input type="text" id="sectorName" style="width:100%; padding:8px; margin-top:5px;" required readonly>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Maximum Properties Capacity (UC1)</label>
+                    <input type="number" id="sectorCapacity" style="width:100%; padding:8px; margin-top:5px;" required>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Current Properties</label>
+                    <input type="number" id="currentProperties" style="width:100%; padding:8px; margin-top:5px;" readonly>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Limits</button>
+                <button type="button" class="btn btn-outline" id="closeModalBtn">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/sector.js"></script>
+</body>
+</html>

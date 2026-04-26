@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamabad Real Estate Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Islamabad Real Estate Management System <span
+                    class="text-gold">.</span></a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="property/search-property.html">Properties</a>
+                <a href="index.html">About</a>
+                <a href="index.html">Contact</a>
+                <a href="index.html" class="btn btn-primary">Login</a>
+                <a href="register.html" class="btn btn-outline">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-aos="zoom-out" data-aos-duration="1500">Discover Premium Real Estate in Islamabad</h1>
+            <p data-aos="zoom-in" data-aos-delay="400" data-aos-duration="1500">Transparent listings, verified agents,
+                and live online bidding under the supervision of the City Real Estate Authority.</p>
+            <a href="property/search-property.html" class="btn btn-primary" data-aos="flip-up" data-aos-delay="800">Explore
+                Properties</a>
+        </div>
+    </section>
+
+    <!-- Search Bar -->
+    <div class="container" style="position: relative; z-index: 10;">
+        <div class="search-container" data-aos="fade-up" data-aos-delay="1000">
+            <input type="text" placeholder="Search by Location or Keyword...">
+            <select>
+                <option value="">All Sectors</option>
+                <option value="F-8">Sector F-8</option>
+                <option value="F-11">Sector F-11</option>
+                <option value="E-7">Sector E-7</option>
+                <option value="D-12">Sector D-12</option>
+            </select>
+            <select>
+                <option value="">Property Type</option>
+                <option value="house">House</option>
+                <option value="apartment">Apartment</option>
+                <option value="commercial">Commercial</option>
+            </select>
+            <button class="btn btn-primary">Search</button>
+        </div>
+    </div>
+
+    <!-- Featured Properties -->
+    <section class="container bg-off-white" style="padding: 60px 0; perspective: 1200px;">
+        <h2 class="section-title" data-aos="zoom-in">Active Bidding Properties</h2>
+        <div class="property-grid" style="transform-style: preserve-3d;">
+            <!-- Property 1 -->
+            <div class="property-card" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1200">
+                <div class="property-img" style="background-image: url('images/luxury.png');">
+                    <span class="badge">Live Bidding</span>
+                </div>
+                <div class="property-content">
+                    <div class="property-price">PKR 8.5 Crore</div>
+                    <h3 class="property-title">Luxury Villa in F-11</h3>
+                    <div class="property-location">Sector F-11, Islamabad</div>
+                    <div class="property-meta">
+                        <span>5 Beds</span>
+                        <span>6 Baths</span>
+                        <span>1 Kanal</span>
+                    </div>
+                    <a href="property/search-property.html" class="btn btn-outline"
+                        style="width: 100%; margin-top: 20px; text-align: center;">View & Bid</a>
+                </div>
+            </div>
+
+            <!-- Property 2 -->
+            <div class="property-card" data-aos="fade-up" data-aos-delay="500" data-aos-duration="1200">
+                <div class="property-img" style="background-image: url('images/modern.png');">
+                    <span class="badge">Fixed Price</span>
+                </div>
+                <div class="property-content">
+                    <div class="property-price">PKR 12 Crore</div>
+                    <h3 class="property-title">Modern Design House</h3>
+                    <div class="property-location">Sector E-7, Islamabad</div>
+                    <div class="property-meta">
+                        <span>6 Beds</span>
+                        <span>7 Baths</span>
+                        <span>2 Kanal</span>
+                    </div>
+                    <a href="property/search-property.html" class="btn btn-outline"
+                        style="width: 100%; margin-top: 20px; text-align: center;">View Details</a>
+                </div>
+            </div>
+
+            <!-- Property 3 -->
+            <div class="property-card" data-aos="fade-up" data-aos-delay="800" data-aos-duration="1200">
+                <div class="property-img" style="background-image: url('images/mansion.png');">
+                    <span class="badge">Live Bidding</span>
+                </div>
+                <div class="property-content">
+                    <div class="property-price">PKR 4.2 Crore</div>
+                    <h3 class="property-title">Commercial Plaza Floor</h3>
+                    <div class="property-location">Sector Blue Area, Islamabad</div>
+                    <div class="property-meta">
+                        <span>Commercial</span>
+                        <span>3 Baths</span>
+                        <span>3000 Sqft</span>
+                    </div>
+                    <a href="property/search-property.html" class="btn btn-outline"
+                        style="width: 100%; margin-top: 20px; text-align: center;">View & Bid</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>Islamabad Real Estate Management System</h3>
+                    <p>The first official online real estate management and bidding system for Islamabad.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Properties</a></li>
+                        <li><a href="#">Live Auctions</a></li>
+                        <li><a href="#">Agents</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">City Authority Rules</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li>Head Office: F-8 Markaz, Islamabad</li>
+                        <li>Email: support@irms.gov.pk</li>
+                        <li>Phone: +92 51 111 222 333</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Islamabad Real Estate Management System. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 50
+        });
+    </script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
