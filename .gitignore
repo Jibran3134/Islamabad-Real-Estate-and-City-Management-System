@@ -1,6 +1,7 @@
 ### IntelliJ IDEA ###
 .idea/
 out/
+*.iml
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
@@ -29,3 +30,12 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Node ###
+frontend/node_modules/
+frontend/.cache/
+
+### Build artifacts ###
+*.class
+*.jar
+!backend/lib/*.jar
