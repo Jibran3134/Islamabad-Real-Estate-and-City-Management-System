@@ -42,7 +42,7 @@ public class MainApplication {
             userController = new UserController();
             propertyController = new PropertyController();
             bidController = new BidController();
-            System.out.println("✅ All controllers initialized.\n");
+            System.out.println(" All controllers initialized.\n");
 
             // ── Start the application loop ───────────────────────────
             Scanner scanner = new Scanner(System.in);
@@ -50,18 +50,18 @@ public class MainApplication {
 
             while (running) {
                 if (currentUser == null) {
-                    showMainMenu();
+            //        showMainMenu();
                 } else {
-                    showDashboardMenu();
+             //       showDashboardMenu();
                 }
 
                 System.out.print("\nEnter choice: ");
                 String choice = scanner.nextLine().trim();
 
                 if (currentUser == null) {
-                    running = handleMainMenu(choice, scanner);
+              //      running = handleMainMenu(choice, scanner);
                 } else {
-                    handleDashboardMenu(choice, scanner);
+              //      handleDashboardMenu(choice, scanner);
                 }
             }
 

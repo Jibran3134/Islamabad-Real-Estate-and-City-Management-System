@@ -4,16 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Singleton class to manage the SQL Server database connection.
- * Connects to the islamabad_real_estate database on JIBRAN-PC\SQLEXPRESS.
- *
- * Uses Windows Authentication by default.
- * If you want SQL Server Authentication instead, use the overloaded getInstance(username, password).
- */
+
+// Singleton class to manage the SQL Server database connection.
+// Connects to the islamabad_real_estate database on JIBRAN-PC\SQLEXPRESS.
+ 
 public class DatabaseConnection {
 
-    // ── Connection Configuration ──────────────────────────────────────
     private static final String SERVER   = "JIBRAN-PC\\SQLEXPRESS";
     private static final String DATABASE = "islamabad_real_estate";
     private static final String PORT     = "1433";
@@ -30,13 +26,12 @@ public class DatabaseConnection {
     private static DatabaseConnection instance;
     private Connection connection;
 
-    // ── Private Constructor ───────────────────────────────────────────
     private DatabaseConnection() throws SQLException {
         try {
             // Load the SQL Server JDBC driver
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             this.connection = DriverManager.getConnection(URL);
-            System.out.println("✅ Database connection established successfully!");
+            System.out.println(" Database connection established successfully!");
             System.out.println("   Server:   " + SERVER);
             System.out.println("   Database: " + DATABASE);
         } catch (ClassNotFoundException e) {
@@ -47,7 +42,6 @@ public class DatabaseConnection {
         }
     }
 
-    // ── Constructor with SQL Server Authentication ────────────────────
     private DatabaseConnection(String username, String password) throws SQLException {
         try {
             String sqlAuthUrl =
@@ -58,7 +52,7 @@ public class DatabaseConnection {
 
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             this.connection = DriverManager.getConnection(sqlAuthUrl, username, password);
-            System.out.println("✅ Database connection established successfully!");
+            System.out.println(" Database connection established successfully!");
             System.out.println("   Server:   " + SERVER);
             System.out.println("   Database: " + DATABASE);
             System.out.println("   User:     " + username);
@@ -100,6 +94,20 @@ public class DatabaseConnection {
      */
     public Connection getConnection() {
         return connection;
+    }
+
+    // ── Static Factory (used by Repositories via try-with-resources) ──
+    /**
+     * Returns a fresh JDBC connection for each call.
+     * Callers must close it — use inside try-with-resources.
+     */
+    public static Connection getConnection() throws SQLException {
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            return DriverManager.getConnection(URL);
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("SQL Server JDBC Driver not found. Add mssql-jdbc to pom.xml.", e);
+        }
     }
 
     // ── Close Connection ──────────────────────────────────────────────

@@ -4,137 +4,203 @@ import com.myapp.model.Bid;
 import com.myapp.model.Property;
 import com.myapp.repository.BidRepository;
 import com.myapp.repository.PropertyRepository;
+import com.myapp.model.BiddingSession;
+import com.myapp.repository.BiddingSessionRepository;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
+
+
+
+
 /**
- * SERVICE (Model Layer - Business Logic): Handles bidding business rules.
- * Validates bid amounts, enforces auction rules, and manages bid lifecycle.
+ * BidService contains all the business logic for bidding.
+ *
+ * Use Cases:
+ *   UC6  – Place Bid on Property
+ *   UC8  – Close Bidding Automatically
+ *   UC9  – Declare Winning Bidder
  */
 public class BidService {
 
     private final BidRepository bidRepository;
+    private final BiddingSessionRepository sessionRepository;
     private final PropertyRepository propertyRepository;
 
-    public BidService() throws SQLException {
+    public BidService() {
         this.bidRepository = new BidRepository();
+        this.sessionRepository = new BiddingSessionRepository();
         this.propertyRepository = new PropertyRepository();
     }
 
-    // ── Place a Bid ───────────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────
+    // UC6 – Place Bid on Property
+    // ──────────────────────────────────────────────────────
 
     /**
-     * Places a new bid on a property after validation.
-     * @return the new bid ID
-     * @throws IllegalArgumentException if the bid is invalid
+     * UC6: Fetch the bidding session so the controller can display
+     * the current highest bid to the buyer.
      */
-    public int placeBid(int propertyId, int bidderId, BigDecimal bidAmount) throws SQLException {
-
-        // Validate bid amount
-        if (bidAmount == null || bidAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Bid amount must be greater than zero.");
-        }
-
-        // Verify property exists and is on auction
-        Property property = propertyRepository.findById(propertyId);
-        if (property == null) {
-            throw new IllegalArgumentException("Property not found.");
-        }
-        if (!"auction".equals(property.getStatus())) {
-            throw new IllegalArgumentException("This property is not currently on auction.");
-        }
-
-        // Ensure bid is higher than the current highest bid
-        Bid highestBid = bidRepository.findHighestBid(propertyId);
-        if (highestBid != null && bidAmount.compareTo(highestBid.getBidAmount()) <= 0) {
-            throw new IllegalArgumentException("Your bid must be higher than the current highest bid of " +
-                    highestBid.getBidAmount());
-        }
-
-        // Ensure bid is at least equal to the property's base price
-        if (bidAmount.compareTo(property.getPrice()) < 0) {
-            throw new IllegalArgumentException("Bid must be at least the base price of " + property.getPrice());
-        }
-
-        Bid bid = new Bid(propertyId, bidderId, bidAmount);
-        return bidRepository.create(bid);
-    }
-
-    // ── Read Bids ─────────────────────────────────────────────────────
-
-    /**
-     * Gets all bids for a specific property (sorted by amount desc).
-     */
-    public List<Bid> getBidsForProperty(int propertyId) throws SQLException {
-        return bidRepository.findByPropertyId(propertyId);
+    public BiddingSession getSession(int sessionId) {
+        return sessionRepository.findById(sessionId);
     }
 
     /**
-     * Gets all bids placed by a specific user.
+     * UC6: Validate the submitted bid amount.
+     * - Session must exist and be active.
+     * - Bid must be higher than the current highest bid (or base price).
      */
-    public List<Bid> getBidsByUser(int bidderId) throws SQLException {
-        return bidRepository.findByBidderId(bidderId);
+    public String validateBid(int sessionId, BigDecimal bidAmount) {
+        BiddingSession session = sessionRepository.findById(sessionId);
+
+        if (session == null) {
+            return "ERROR: Bidding session not found.";
+        }
+
+        // Extension: session is closed — do not allow the bid
+        if (!session.isActive()) {
+            return "ERROR: Bidding session is closed. You cannot place a bid.";
+        }
+
+        // Extension: bid is too low — reject and show message
+        if (!session.isBidHighEnough(bidAmount)) {
+            BigDecimal minimum = (session.getCurrentHighestBid() != null)
+                    ? session.getCurrentHighestBid()
+                    : session.getBasePrice();
+            return "ERROR: Your bid must be higher than the current highest bid of " + minimum + ".";
+        }
+
+        return "VALID";
     }
 
     /**
-     * Gets the current highest bid for a property.
+     * UC6: Save the new bid to the database.
      */
-    public Bid getHighestBid(int propertyId) throws SQLException {
-        return bidRepository.findHighestBid(propertyId);
-    }
-
-    // ── Manage Bids ───────────────────────────────────────────────────
-
-    /**
-     * Accepts a bid (and rejects all other bids for the same property).
-     */
-    public boolean acceptBid(int bidId) throws SQLException {
-        Bid bid = bidRepository.findById(bidId);
-        if (bid == null) {
-            throw new IllegalArgumentException("Bid not found.");
-        }
-
-        // Accept this bid
-        bidRepository.updateStatus(bidId, "accepted");
-
-        // Reject all other active bids for the same property
-        List<Bid> otherBids = bidRepository.findByPropertyId(bid.getPropertyId());
-        for (Bid other : otherBids) {
-            if (other.getBidId() != bidId && "active".equals(other.getBidStatus())) {
-                bidRepository.updateStatus(other.getBidId(), "rejected");
-            }
-        }
-
-        // Mark the property as pending (sale in progress)
-        Property property = propertyRepository.findById(bid.getPropertyId());
-        if (property != null) {
-            property.setStatus("pending");
-            propertyRepository.update(property);
-        }
-
-        return true;
+    public boolean saveBid(int sessionId, int buyerId, BigDecimal bidAmount) {
+        Bid bid = new Bid(sessionId, buyerId, bidAmount);
+        return bidRepository.saveBid(bid);
     }
 
     /**
-     * Rejects a specific bid.
+     * UC6: Update the session's current highest bid in the database.
      */
-    public boolean rejectBid(int bidId) throws SQLException {
-        return bidRepository.updateStatus(bidId, "rejected");
+    public void updateHighestBid(int sessionId, BigDecimal bidAmount) {
+        sessionRepository.updateHighestBid(sessionId, bidAmount);
+    }
+
+    // ──────────────────────────────────────────────────────
+    // UC8 – Close Bidding Automatically
+    // ──────────────────────────────────────────────────────
+
+    /**
+     * UC8: Called when the system timer detects the deadline has passed.
+     *
+     * Steps:
+     *   1. Confirm the session exists and is still active.
+     *   2. Check deadline has actually passed.
+     *   3. Stop accepting new bids by setting status to Closed.
+     *   4. Record the final highest bid.
+     *   5. Return closure confirmation.
+     */
+    public String closeBiddingSession(int sessionId) {
+        BiddingSession session = sessionRepository.findById(sessionId);
+
+        if (session == null) {
+            return "ERROR: Bidding session not found.";
+        }
+
+        if (!session.isActive()) {
+            return "INFO: Bidding session is already closed.";
+        }
+
+        // Check that the deadline has actually passed
+        if (!session.isDeadlinePassed()) {
+            return "INFO: Bidding deadline has not passed yet. Session remains open.";
+        }
+
+        // Close the session — sets status to "Closed" on the model object
+        session.closeBidding(null, session.getCurrentHighestBid());
+
+        // Persist the closed status and final highest bid to the database
+        boolean closed = sessionRepository.closeSession(
+                sessionId,
+                null,
+                session.getCurrentHighestBid()
+        );
+
+        if (!closed) {
+            return "ERROR: Could not close bidding session. Please retry.";
+        }
+
+        return "SUCCESS: Bidding session " + sessionId + " has been closed. "
+                + "Final highest bid: " + session.getCurrentHighestBid();
+    }
+
+    // ──────────────────────────────────────────────────────
+    // UC9 – Declare Winning Bidder
+    // ──────────────────────────────────────────────────────
+
+    /**
+     * UC9: After session is closed, determine and record the winner.
+     *
+     * Steps:
+     *   1. Confirm session is closed.
+     *   2. Retrieve all bids for the session.
+     *   3. Find the highest valid bid (if tie, pick earliest by time).
+     *   4. Record the winning bidder on the session.
+     *   5. Update the property listing status to "Sold".
+     *   6. Send winner notification (simulated here as a return message).
+     */
+    public String declareWinner(int sessionId) {
+        BiddingSession session = sessionRepository.findById(sessionId);
+
+        if (session == null) {
+            return "ERROR: Bidding session not found.";
+        }
+
+        if (session.isActive()) {
+            return "ERROR: Bidding session is still active. Close it first.";
+        }
+
+        // Retrieve all bids, ordered by amount descending then time ascending
+        List<Bid> bids = bidRepository.findBySessionId(sessionId);
+
+        if (bids == null || bids.isEmpty()) {
+            return "INFO: No bids found for this session. No winner to declare.";
+        }
+
+        // The first bid in the list is the winner
+        // (BidRepository returns bids sorted by amount DESC, then time ASC for tie-breaking)
+        Bid winningBid = bids.get(0);
+
+        // Record the winning bidder on the session
+        session.closeBidding(winningBid.getBuyerId(), winningBid.getBidAmount());
+        sessionRepository.closeSession(
+                sessionId,
+                winningBid.getBuyerId(),
+                winningBid.getBidAmount()
+        );
+
+        // Update the property listing status to "Sold"
+        propertyRepository.updateListingStatus(session.getPropertyId(), "Sold");
+
+        // Notify the winner (in a real system this would send an email)
+        String notification = sendWinnerNotification(winningBid.getBuyerId(), winningBid.getBidAmount());
+
+        return "SUCCESS: Winner declared. Buyer ID " + winningBid.getBuyerId()
+                + " won with a bid of " + winningBid.getBidAmount() + ". " + notification;
     }
 
     /**
-     * Withdraws a bid (by the bidder).
+     * Simulates sending a notification to the winning bidder.
+     * In a real system, this would send an email or push notification.
      */
-    public boolean withdrawBid(int bidId, int bidderId) throws SQLException {
-        Bid bid = bidRepository.findById(bidId);
-        if (bid == null) {
-            throw new IllegalArgumentException("Bid not found.");
-        }
-        if (bid.getBidderId() != bidderId) {
-            throw new IllegalArgumentException("You can only withdraw your own bids.");
-        }
-        return bidRepository.updateStatus(bidId, "withdrawn");
+    private String sendWinnerNotification(int buyerId, BigDecimal winningAmount) {
+        // Placeholder — replace with actual email/notification logic
+        System.out.println("Notification sent to buyer " + buyerId
+                + ": You won the auction with a bid of " + winningAmount + "!");
+        return "Winner notification sent to buyer ID " + buyerId + ".";
     }
 }

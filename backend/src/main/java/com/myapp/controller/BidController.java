@@ -1,132 +1,99 @@
 package com.myapp.controller;
 
-import com.myapp.model.Bid;
+import com.myapp.model.BiddingSession;
 import com.myapp.service.BidService;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.List;
 
-/**
- * CONTROLLER: Handles bid-related requests from the View layer.
- * Coordinates between the frontend (View) and the BidService (Model).
- *
- * In MVC, the Controller:
- *   1. Receives user input from the View (e.g., bid amount from auction page)
- *   2. Calls the appropriate Service/Model methods
- *   3. Returns the result to the View for display
- */
+
+
+ // BidController handles all requests related to bidding.
+ // Use Cases:
+ //   UC6 Place Bid on Property
+ //   UC8 Close Bidding Automatically
+ //   UC9 Declare Winning Bidder
+ //
 public class BidController {
 
     private final BidService bidService;
 
-    public BidController() throws SQLException {
+    public BidController() {
         this.bidService = new BidService();
     }
 
-    // ── Place Bid ─────────────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────
+    // UC6 – Place Bid on Property
+    // ──────────────────────────────────────────────────────
 
     /**
-     * Handles bid placement from the property details View.
-     * @return success or error message
+     * UC6 Step 1: Buyer opens the bidding page.
+     * System displays the current highest bid (or base price if no bids yet).
      */
-    public String handlePlaceBid(int propertyId, int bidderId, String bidAmountStr) {
-        try {
-            BigDecimal bidAmount = new BigDecimal(bidAmountStr);
-            int bidId = bidService.placeBid(propertyId, bidderId, bidAmount);
+    public String openBiddingPage(int sessionId) {
+        BiddingSession session = bidService.getSession(sessionId);
 
-            if (bidId > 0) {
-                return "SUCCESS: Bid placed successfully! Bid ID: " + bidId;
-            } else {
-                return "ERROR: Failed to place bid.";
-            }
-        } catch (NumberFormatException e) {
-            return "ERROR: Invalid bid amount format.";
-        } catch (IllegalArgumentException e) {
-            return "ERROR: " + e.getMessage();
-        } catch (SQLException e) {
-            return "ERROR: Database error — " + e.getMessage();
+        if (session == null) {
+            return "ERROR: Bidding session not found.";
         }
-    }
 
-    // ── View Bids ─────────────────────────────────────────────────────
-
-    /**
-     * Gets all bids for a property (for agent/admin to review).
-     */
-    public List<Bid> getBidsForProperty(int propertyId) {
-        try {
-            return bidService.getBidsForProperty(propertyId);
-        } catch (SQLException e) {
-            System.err.println("Error fetching bids: " + e.getMessage());
-            return List.of();
+        // Extension: if session is closed, do not allow entry
+        if (!session.isActive()) {
+            return "ERROR: This bidding session is closed. No more bids are allowed.";
         }
+BigDecimal displayedBid;
+         if(session.getCurrentHighestBid() != null)
+                displayedBid = session.getCurrentHighestBid();
+                else
+                    displayedBid = session.getBasePrice();
+
+        return "Current highest bid: " + displayedBid;
     }
 
     /**
-     * Gets all bids placed by a specific user (for buyer dashboard).
+     * UC6 Step 2 & 3: Buyer enters a bid amount and submits it.
      */
-    public List<Bid> getMyBids(int bidderId) {
-        try {
-            return bidService.getBidsByUser(bidderId);
-        } catch (SQLException e) {
-            System.err.println("Error fetching user bids: " + e.getMessage());
-            return List.of();
+    public String placeBid(int sessionId, int buyerId, BigDecimal bidAmount) {
+        // System validates the bid amount
+        String validation = bidService.validateBid(sessionId, bidAmount);
+        if (!validation.equals("VALID")) {
+            return validation;
         }
+
+        // System records the bid in the database
+        boolean saved = bidService.saveBid(sessionId, buyerId, bidAmount);
+        if (!saved) {
+            return "ERROR: Could not save your bid. Please try again.";
+        }
+
+        // System updates highest bid if this bid is the new highest
+        bidService.updateHighestBid(sessionId, bidAmount);
+
+        // System displays confirmation message
+        return "SUCCESS: Your bid of " + bidAmount + " was placed successfully.";
     }
 
+    // ──────────────────────────────────────────────────────
+    // UC8 – Close Bidding Automatically
+    // ──────────────────────────────────────────────────────
+
     /**
-     * Gets the current highest bid for a property.
+     * UC8: Called by a system timer when the bidding deadline has passed.
+     * Stops new bids, records final highest bid, sets status to Closed.
      */
-    public Bid getHighestBid(int propertyId) {
-        try {
-            return bidService.getHighestBid(propertyId);
-        } catch (SQLException e) {
-            System.err.println("Error fetching highest bid: " + e.getMessage());
-            return null;
-        }
+    public String closeBiddingSession(int sessionId) {
+        return bidService.closeBiddingSession(sessionId);
     }
 
-    // ── Manage Bids ───────────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────
+    // UC9 – Declare Winning Bidder
+    // ──────────────────────────────────────────────────────
 
     /**
-     * Accepts a bid (agent/admin action).
+     * UC9: After the session is closed, declare the winner.
+     * Retrieves all bids, picks the highest, records winner,
+     * updates property status, and sends notification.
      */
-    public String handleAcceptBid(int bidId) {
-        try {
-            boolean success = bidService.acceptBid(bidId);
-            return success ? "SUCCESS: Bid accepted. Other bids have been rejected." :
-                           "ERROR: Failed to accept bid.";
-        } catch (IllegalArgumentException e) {
-            return "ERROR: " + e.getMessage();
-        } catch (SQLException e) {
-            return "ERROR: Database error — " + e.getMessage();
-        }
-    }
-
-    /**
-     * Rejects a bid (agent/admin action).
-     */
-    public String handleRejectBid(int bidId) {
-        try {
-            boolean success = bidService.rejectBid(bidId);
-            return success ? "SUCCESS: Bid rejected." : "ERROR: Bid not found.";
-        } catch (SQLException e) {
-            return "ERROR: Database error — " + e.getMessage();
-        }
-    }
-
-    /**
-     * Withdraws a bid (buyer action).
-     */
-    public String handleWithdrawBid(int bidId, int bidderId) {
-        try {
-            boolean success = bidService.withdrawBid(bidId, bidderId);
-            return success ? "SUCCESS: Bid withdrawn." : "ERROR: Failed to withdraw bid.";
-        } catch (IllegalArgumentException e) {
-            return "ERROR: " + e.getMessage();
-        } catch (SQLException e) {
-            return "ERROR: Database error — " + e.getMessage();
-        }
+    public String declareWinner(int sessionId) {
+        return bidService.declareWinner(sessionId);
     }
 }

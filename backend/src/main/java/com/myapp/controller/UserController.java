@@ -6,118 +6,106 @@ import com.myapp.service.UserService;
 import java.sql.SQLException;
 import java.util.List;
 
+
 /**
- * CONTROLLER: Handles user-related requests from the View layer.
- * Coordinates between the frontend (View) and the UserService (Model).
+ * UserController handles all requests related to user account management.
  *
- * In MVC, the Controller:
- *   1. Receives user input from the View
- *   2. Calls the appropriate Service/Model methods
- *   3. Returns the result to the View for display
+ * Use Cases:
+ *   UC11 – Managing User Accounts
  */
 public class UserController {
 
     private final UserService userService;
 
-    public UserController() throws SQLException {
+    public UserController() {
         this.userService = new UserService();
     }
 
-    // ── Registration ──────────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────
+    // UC11 – Managing User Accounts
+    // ──────────────────────────────────────────────────────
 
     /**
-     * Handles user registration requests from the registration form.
-     * @return success message or error message
+     * UC11 Step 1: Administrator opens the user management dashboard.
+     * System retrieves all user records from the database.
+     * System processes the query and returns the user list.
+     *
+     * @param adminId  The ID of the admin making the request (for permission check)
      */
-    public String handleRegister(String fullName, String email, String password,
-                                 String phone, String role) {
-        try {
-            int userId = userService.registerUser(fullName, email, password, phone, role);
-            if (userId > 0) {
-                return "SUCCESS: Account created successfully! Your user ID is " + userId;
-            } else {
-                return "ERROR: Registration failed. Please try again.";
-            }
-        } catch (IllegalArgumentException e) {
-            return "ERROR: " + e.getMessage();
-        } catch (SQLException e) {
-            return "ERROR: Database error — " + e.getMessage();
+    public String openUserManagementDashboard(int adminId) {
+        // Check if the requesting user has admin permissions
+        boolean hasPermission = userService.isAdmin(adminId);
+        if (!hasPermission) {
+            // Extension: If permission denied, block access
+            return "ERROR: Access denied. You do not have admin permissions.";
         }
-    }
 
-    // ── Login ─────────────────────────────────────────────────────────
+        // System retrieves user records from the database
+        List<User> users = userService.getAllUsers();
 
-    /**
-     * Handles login requests from the login form.
-     * @return the authenticated User or null if login fails
-     */
-    public User handleLogin(String email, String password) {
-        try {
-            User user = userService.login(email, password);
-            if (user != null) {
-                System.out.println("Login successful: " + user.getFullName() + " (" + user.getRole() + ")");
-            }
-            return user;
-        } catch (IllegalArgumentException e) {
-            System.err.println("Login error: " + e.getMessage());
-            return null;
-        } catch (SQLException e) {
-            System.err.println("Database error during login: " + e.getMessage());
-            return null;
+        // Extension: If no records found, show empty list message
+        if (users == null || users.isEmpty()) {
+            return "INFO: No user records found.";
         }
-    }
 
-    /**
-     * Determines which dashboard view to show based on the user's role.
-     * @return the dashboard view identifier
-     */
-    public String getDashboardView(User user) {
-        if (user == null) return "login";
+        // System displays user account list
+        StringBuilder result = new StringBuilder();
+        result.append("User Account List (").append(users.size()).append(" records):\n");
+        result.append("------------------------------------------------------------\n");
 
-        return switch (user.getRole()) {
-            case "admin"     -> "dashboard-admin";
-            case "agent"     -> "dashboard-agent";
-            case "buyer"     -> "dashboard-buyer";
-            case "authority" -> "dashboard-authority";
-            default          -> "login";
-        };
-    }
-
-    // ── User Management (Admin) ───────────────────────────────────────
-
-    /**
-     * Gets all users (for admin panel).
-     */
-    public List<User> getAllUsers() {
-        try {
-            return userService.getAllUsers();
-        } catch (SQLException e) {
-            System.err.println("Error fetching users: " + e.getMessage());
-            return List.of();
+        for (User user : users) {
+            result.append("ID: ").append(user.getUserId())
+                  .append(" | Name: ").append(user.getFullName())
+                  .append(" | Email: ").append(user.getEmail())
+                  .append(" | Role: ").append(user.getRoleId())
+                  .append(" | Status: ").append(user.getStatus())
+                  .append("\n");
         }
+
+        return result.toString();
     }
 
     /**
-     * Gets a user by their ID.
+     * UC11: Retrieve a single user by their ID.
+     * Used for viewing account details.
      */
-    public User getUserById(int userId) {
-        try {
-            return userService.getUserById(userId);
-        } catch (SQLException e) {
-            System.err.println("Error fetching user: " + e.getMessage());
-            return null;
+    public String getUserById(int adminId, int targetUserId) {
+        // Permission check
+        if (!userService.isAdmin(adminId)) {
+            return "ERROR: Access denied. You do not have admin permissions.";
         }
+
+        User user = userService.getUserById(targetUserId);
+
+        if (user == null) {
+            return "ERROR: User with ID " + targetUserId + " not found.";
+        }
+
+        return "User Details:\n"
+                + "ID: " + user.getUserId() + "\n"
+                + "Name: " + user.getFullName() + "\n"
+                + "Email: " + user.getEmail() + "\n"
+                + "Phone: " + user.getPhoneNumber() + "\n"
+                + "Role ID: " + user.getRoleId() + "\n"
+                + "Status: " + user.getStatus();
     }
 
     /**
-     * Deactivates a user account.
+     * UC11: Update a user's status (e.g., Active → Suspended).
+     * Used for account management actions.
      */
-    public String handleDeactivateUser(int userId) {
-        try {
-            boolean success = userService.deactivateUser(userId);
-            return success ? "SUCCESS: User deactivated." : "ERROR: User not found.";
-        } catch (SQLException e) {
-            return "ERROR: " + e.getMessage();
+    public String updateUserStatus(int adminId, int targetUserId, String newStatus) {
+        // Permission check
+        if (!userService.isAdmin(adminId)) {
+            return "ERROR: Access denied. You do not have admin permissions.";
         }
+
+        boolean updated = userService.updateUserStatus(targetUserId, newStatus);
+
+        if (!updated) {
+            return "ERROR: Could not update status. Please try again.";
+        }
+
+        return "SUCCESS: User " + targetUserId + " status updated to " + newStatus + ".";
     }
 }

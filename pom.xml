@@ -24,11 +24,11 @@
             <scope>provided</scope>
         </dependency>
         
-        <!-- MySQL Connector -->
+        <!-- Microsoft SQL Server JDBC Driver -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.28</version>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.6.4.jre11</version>
         </dependency>
         
         <!-- JSON handling -->
@@ -46,6 +46,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.2</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
             </plugin>
         </plugins>
     </build>
