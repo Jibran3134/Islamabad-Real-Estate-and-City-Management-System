@@ -42,6 +42,11 @@ public class SectorService {
     /**
      * Main business logic for UC1 - Define Sector Capacity Limits
      * GRASP: PROTECTED VARIATIONS - Changes to validation won't affect this method
+     * 
+     * SD4 FIX: After DB update, sector.setCapacityLimit() is called to keep
+     *          the Java object in sync with the database (SD4 step 6-7).
+     * ALT SCENARIO 4 FIX: handleSystemCrash() wraps the entire operation
+     *          and calls restoreLastSavedData() on unexpected failures.
      */
     public UpdateResult updateSectorCapacity(int sectorId, int newCapacity, int authorityId) throws SQLException {
         
@@ -51,6 +56,9 @@ public class SectorService {
             return new UpdateResult(false, "Sector not found", null);
         }
         
+        // Save old capacity for rollback/logging (ALT SCENARIO 4: restoreLastSavedData)
+        int oldCapacity = sector.getCapacityLimit();
+        
         // STEP 2: Validate new capacity (GoF STRATEGY pattern in action)
         ValidationResult validation = validator.validate(newCapacity);
         if (!validation.isValid()) {
@@ -58,16 +66,74 @@ public class SectorService {
         }
         
         // STEP 3: Create and execute command (GRASP CREATOR pattern)
-        UpdateCapacityCommand command = new UpdateCapacityCommand(sectorId, newCapacity, sectorRepository);
-        boolean success = command.execute();
+        // Wrapped in crash handler (ALT SCENARIO 4)
+        try {
+            UpdateCapacityCommand command = new UpdateCapacityCommand(sectorId, newCapacity, sectorRepository);
+            boolean success = command.execute();
+            
+            if (success) {
+                // SD4 FIX (STEP 6): Update the in-memory Sector object
+                // This matches SD4: SectorRepository → Sector.setCapacityLimit()
+                sector.setCapacityLimit(newCapacity);
+                
+                // STEP 5: Log the update (PURE FABRICATION)
+                String logMessage = "CAPACITY_UPDATED from " + oldCapacity + " to " + newCapacity;
+                auditLogRepository.logUpdate(sectorId, authorityId, logMessage);
+                
+                return new UpdateResult(true, "Capacity updated successfully", newCapacity);
+            } else {
+                return new UpdateResult(false, "Database update failed, please try again", null);
+            }
+            
+        } catch (SQLException e) {
+            // ALT SCENARIO 4: handleSystemCrash() — catch unexpected DB failures
+            return handleSystemCrash(sectorId, oldCapacity, e);
+        } catch (Exception e) {
+            // ALT SCENARIO 4: Catch any unexpected runtime crash
+            return handleSystemCrash(sectorId, oldCapacity, e);
+        }
+    }
+    
+    /**
+     * ALT SCENARIO 4: handleSystemCrash()
+     * Called when an unexpected error occurs during capacity update.
+     * Attempts to restore the last known good state from the database.
+     * Maps to Extended UC1 Extension 4: "system shows error and restores last saved data"
+     */
+    private UpdateResult handleSystemCrash(int sectorId, int previousCapacity, Exception e) {
+        System.err.println("[CRASH HANDLER] System error during capacity update: " + e.getMessage());
         
-        // STEP 4: Log the update if successful (PURE FABRICATION)
-        if (success) {
-            String logMessage = "CAPACITY_UPDATED from " + sector.getCapacityLimit() + " to " + newCapacity;
-            auditLogRepository.logUpdate(sectorId, authorityId, logMessage);
-            return new UpdateResult(true, "Capacity updated successfully", newCapacity);
+        // Attempt to restore last saved data from database
+        Sector restoredSector = restoreLastSavedData(sectorId);
+        
+        if (restoredSector != null) {
+            System.err.println("[CRASH HANDLER] Restored sector data from database. " +
+                "Current capacity in DB: " + restoredSector.getCapacityLimit());
+            return new UpdateResult(false, 
+                "System error occurred. Data restored to last saved state (capacity: " + 
+                restoredSector.getCapacityLimit() + "). Please try again.", null);
         } else {
-            return new UpdateResult(false, "Database update failed, please try again", null);
+            System.err.println("[CRASH HANDLER] Could not restore sector data. Previous capacity was: " + previousCapacity);
+            return new UpdateResult(false, 
+                "System error occurred. Could not verify data state. " +
+                "Previous capacity was: " + previousCapacity + ". Please contact administrator.", null);
+        }
+    }
+    
+    /**
+     * ALT SCENARIO 4: restoreLastSavedData()
+     * Re-fetches sector from database to verify/restore consistent state.
+     * Since SectorRepository uses transaction rollback (Alt Scenario 3),
+     * the DB state is always consistent — this method confirms it.
+     */
+    private Sector restoreLastSavedData(int sectorId) {
+        try {
+            // Re-read from database — this is the "last saved data"
+            // Since transactions roll back on failure, DB is always in a valid state
+            return sectorRepository.findSectorById(sectorId);
+        } catch (SQLException ex) {
+            System.err.println("[RESTORE FAILED] Cannot read from database: " + ex.getMessage());
+            return null;
         }
     }
     
