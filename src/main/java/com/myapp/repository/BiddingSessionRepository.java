@@ -67,6 +67,47 @@ public class BiddingSessionRepository {
     }
 
     /**
+     * Get all active bidding sessions for dashboard display.
+     * Reuses same column mapping as findById.
+     */
+    public java.util.List<BiddingSession> findAllActive() {
+        java.util.List<BiddingSession> sessions = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM Bidding_Session ORDER BY status ASC, session_id DESC";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                BiddingSession session = new BiddingSession();
+                session.setSessionId(rs.getInt("session_id"));
+                session.setPropertyId(rs.getInt("property_id"));
+                session.setBasePrice(rs.getBigDecimal("base_price"));
+
+                Timestamp deadline = rs.getTimestamp("deadline");
+                if (deadline != null) session.setDeadline(deadline.toLocalDateTime());
+
+                session.setStatus(rs.getString("status"));
+
+                int winnerId = rs.getInt("winner_id");
+                if (!rs.wasNull()) session.setWinnerId(winnerId);
+
+                BigDecimal winningBid = rs.getBigDecimal("winning_bid_amount");
+                if (winningBid != null) session.setWinningBidAmount(winningBid);
+
+                BigDecimal highestBid = rs.getBigDecimal("current_highest_bid");
+                if (highestBid != null) session.setCurrentHighestBid(highestBid);
+
+                sessions.add(session);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching active sessions: " + e.getMessage());
+        }
+
+        return sessions;
+    }
+
+    /**
      * UC6: Update the current highest bid after a new bid is placed.
      */
     public boolean updateHighestBid(int sessionId, BigDecimal newHighestBid) {

@@ -48,6 +48,14 @@ public class BidService {
     }
 
     /**
+     * Get all active bidding sessions for dashboard display.
+     * Used by BiddingDashboardController (JavaFX UI).
+     */
+    public List<BiddingSession> getAllActiveSessions() {
+        return sessionRepository.findAllActive();
+    }
+
+    /**
      * UC6: Validate the submitted bid amount.
      * - Session must exist and be active.
      * - Bid must be higher than the current highest bid (or base price).

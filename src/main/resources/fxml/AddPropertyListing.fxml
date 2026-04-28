@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.myapp.controller.AddPropertyListingController"
+      spacing="15" style="-fx-background-color: -fx-bg-dark;">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="UC3: Add Property Listing" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Close" styleClass="danger-btn" onAction="#handleClose"/>
+    </HBox>
+    <Separator/>
+
+    <!-- Property Form -->
+    <ScrollPane fitToWidth="true" style="-fx-background-color: -fx-bg-dark; -fx-border-color: transparent;">
+        <VBox spacing="15" style="-fx-background-color: -fx-bg-dark;">
+
+            <VBox styleClass="card-dark" spacing="12">
+                <Label text="Property Details" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+
+                <GridPane hgap="15" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="15"/>
+                        <ColumnConstraints percentWidth="35"/>
+                        <ColumnConstraints percentWidth="15"/>
+                        <ColumnConstraints percentWidth="35"/>
+                    </columnConstraints>
+
+                    <Label text="Title:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label-gold"/>
+                    <TextField fx:id="titleField" promptText="Property title" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
+
+                    <Label text="Location:" GridPane.rowIndex="0" GridPane.columnIndex="2" styleClass="label-gold"/>
+                    <TextField fx:id="locationField" promptText="e.g., F-7, Islamabad" GridPane.rowIndex="0" GridPane.columnIndex="3" styleClass="text-field"/>
+
+                    <Label text="Price (PKR):" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="label-gold"/>
+                    <TextField fx:id="priceField" promptText="Enter price" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="text-field"/>
+
+                    <Label text="Property Type:" GridPane.rowIndex="1" GridPane.columnIndex="2" styleClass="label-gold"/>
+                    <ComboBox fx:id="typeCombo" GridPane.rowIndex="1" GridPane.columnIndex="3" styleClass="combo-box" maxWidth="Infinity"/>
+
+                    <Label text="Selling Method:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label-gold"/>
+                    <ComboBox fx:id="sellingMethodCombo" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="combo-box" maxWidth="Infinity"/>
+
+                    <Label text="Sector:" GridPane.rowIndex="2" GridPane.columnIndex="2" styleClass="label-gold"/>
+                    <ComboBox fx:id="sectorCombo" GridPane.rowIndex="2" GridPane.columnIndex="3" styleClass="combo-box" maxWidth="Infinity"/>
+                </GridPane>
+
+                <Label text="Description:" styleClass="label-gold"/>
+                <TextArea fx:id="descriptionArea" promptText="Enter property description..." prefHeight="80" styleClass="text-area"/>
+            </VBox>
+
+            <!-- Action Buttons -->
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="Submit Listing" styleClass="primary-btn" onAction="#handleSubmit" prefWidth="200">
+                    <padding><Insets top="12" bottom="12"/></padding>
+                </Button>
+                <Button text="Clear Form" styleClass="secondary-btn" onAction="#handleClear"/>
+                <Button text="Validate" styleClass="outline-btn" onAction="#handleValidate"/>
+            </HBox>
+
+            <!-- Status -->
+            <Label fx:id="statusLabel" style="-fx-text-fill: -fx-text-muted; -fx-font-size: 13px;"/>
+            <TextArea fx:id="logArea" editable="false" prefHeight="100" styleClass="message-area" promptText="Activity log..."/>
+        </VBox>
+    </ScrollPane>
+</VBox>

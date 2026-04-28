@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.myapp.controller.LoginController"
+           styleClass="main-container">
+
+    <VBox alignment="CENTER" spacing="20" style="-fx-background-color: -fx-bg-darker;">
+
+        <!-- Logo -->
+        <VBox alignment="CENTER" spacing="8">
+            <Label text="IRMS" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+            <Label text="Islamabad Real Estate Management System" style="-fx-font-size: 16px; -fx-text-fill: -fx-text-light;"/>
+            <Label text="Powered by City Real Estate Authority" style="-fx-font-size: 12px; -fx-text-fill: -fx-text-muted;"/>
+        </VBox>
+
+        <Separator maxWidth="300"/>
+
+        <!-- Login Card -->
+        <VBox styleClass="card" maxWidth="420" spacing="14" alignment="CENTER">
+
+            <Label text="SIGN IN" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+
+            <Label text="Email Address" styleClass="label-gold"/>
+            <TextField fx:id="emailField" promptText="Enter your email" styleClass="text-field"/>
+
+            <Label text="Password" styleClass="label-gold"/>
+            <PasswordField fx:id="passwordField" promptText="Enter your password" styleClass="text-field"/>
+
+            <Label text="Login As" styleClass="label-gold"/>
+            <ComboBox fx:id="roleCombo" styleClass="combo-box" maxWidth="Infinity"/>
+
+            <Button text="LOGIN" styleClass="primary-btn" onAction="#handleLogin" maxWidth="Infinity">
+                <padding><Insets top="12" bottom="12"/></padding>
+            </Button>
+
+            <Label fx:id="errorLabel" style="-fx-text-fill: -fx-danger;" visible="false"/>
+        </VBox>
+
+        <Label text="© 2026 Islamabad Real Estate Management System" styleClass="label-muted">
+            <padding><Insets top="20"/></padding>
+        </Label>
+    </VBox>
+</StackPane>

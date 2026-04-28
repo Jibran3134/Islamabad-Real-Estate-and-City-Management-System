@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.myapp.controller.UserManagementController"
+      spacing="15" style="-fx-background-color: -fx-bg-dark;">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="UC11: User Management" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Refresh" styleClass="secondary-btn" onAction="#handleRefresh"/>
+        <Button text="Close" styleClass="danger-btn" onAction="#handleClose"/>
+    </HBox>
+    <Separator/>
+
+    <!-- User Table -->
+    <Label text="All Users" styleClass="label-gold"/>
+    <TableView fx:id="userTable" prefHeight="350" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="ID" fx:id="colUserId" prefWidth="60"/>
+            <TableColumn text="Full Name" fx:id="colName" prefWidth="200"/>
+            <TableColumn text="Email" fx:id="colEmail" prefWidth="220"/>
+            <TableColumn text="Phone" fx:id="colPhone" prefWidth="140"/>
+            <TableColumn text="Role" fx:id="colRole" prefWidth="100"/>
+            <TableColumn text="Status" fx:id="colUserStatus" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <!-- Update Status -->
+    <VBox styleClass="card-dark" spacing="10">
+        <Label text="Update User Status" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Label text="User ID:" styleClass="label-gold"/>
+            <TextField fx:id="targetUserIdField" promptText="Select from table" styleClass="text-field" prefWidth="120"/>
+            <Label text="New Status:" styleClass="label-gold"/>
+            <ComboBox fx:id="statusCombo" styleClass="combo-box" prefWidth="160"/>
+            <Button text="UPDATE STATUS" styleClass="primary-btn" onAction="#handleUpdateStatus"/>
+        </HBox>
+    </VBox>
+
+    <!-- Status & Log -->
+    <Label fx:id="statusLabel" style="-fx-text-fill: -fx-text-muted;"/>
+    <TextArea fx:id="logArea" editable="false" prefHeight="80" styleClass="message-area" promptText="User management log..."/>
+</VBox>

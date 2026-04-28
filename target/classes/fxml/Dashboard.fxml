@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.myapp.controller.DashboardController"
+      spacing="0" style="-fx-background-color: -fx-bg-dark;">
+
+    <!-- Navbar -->
+    <HBox styleClass="navbar" spacing="20" alignment="CENTER_LEFT">
+        <Label text="IRMS" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+        <Label text="|" style="-fx-text-fill: -fx-text-muted;"/>
+        <Label fx:id="userLabel" text="Welcome, User" style="-fx-text-fill: -fx-text-light; -fx-font-size: 14px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="roleLabel" styleClass="badge-dark"/>
+        <Button text="Logout" styleClass="outline-btn" onAction="#handleLogout"/>
+    </HBox>
+
+    <!-- Main Content -->
+    <ScrollPane fitToWidth="true" style="-fx-background-color: -fx-bg-dark; -fx-border-color: transparent;">
+        <VBox spacing="25" style="-fx-background-color: -fx-bg-dark;">
+            <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+
+            <!-- Welcome -->
+            <VBox spacing="5">
+                <Label fx:id="welcomeLabel" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: -fx-text-light;"/>
+                <Label text="Islamabad Real Estate Management System - Dashboard" style="-fx-text-fill: -fx-text-muted; -fx-font-size: 14px;"/>
+            </VBox>
+
+            <Separator/>
+
+            <Label text="Quick Actions" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+
+            <!-- Menu Cards -->
+            <FlowPane fx:id="menuGrid" hgap="18" vgap="18" style="-fx-background-color: transparent;"/>
+
+        </VBox>
+    </ScrollPane>
+</VBox>

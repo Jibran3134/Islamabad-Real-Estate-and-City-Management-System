@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.myapp.controller.SectorDashboardController"
+      spacing="15" style="-fx-background-color: -fx-bg-dark;">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="UC2: Sector Dashboard - Freeze Overloaded" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Close" styleClass="danger-btn" onAction="#handleClose"/>
+    </HBox>
+    <Separator/>
+
+    <!-- Statistics Table -->
+    <Label text="Sector Statistics" styleClass="label-gold"/>
+    <TableView fx:id="statsTable" prefHeight="280">
+        <columns>
+            <TableColumn text="ID" fx:id="colStatId" prefWidth="50"/>
+            <TableColumn text="Sector Name" fx:id="colStatName" prefWidth="180"/>
+            <TableColumn text="Capacity" fx:id="colStatCapacity" prefWidth="100"/>
+            <TableColumn text="Properties" fx:id="colStatCount" prefWidth="100"/>
+            <TableColumn text="Usage %" fx:id="colStatUsage" prefWidth="100"/>
+            <TableColumn text="Status" fx:id="colStatStatus" prefWidth="100"/>
+            <TableColumn text="Overloaded?" fx:id="colStatOverloaded" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <!-- Freeze Section -->
+    <VBox styleClass="card-dark" spacing="12">
+        <Label text="Freeze Sector" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Label text="Sector ID:" styleClass="label-gold"/>
+            <TextField fx:id="freezeSectorIdField" promptText="Select from table" styleClass="text-field" prefWidth="150"/>
+            <CheckBox fx:id="overrideCheckbox" text="Override Warning" style="-fx-text-fill: -fx-text-light;"/>
+            <Button text="FREEZE SECTOR" styleClass="danger-btn" onAction="#handleFreezeSector"/>
+            <Button text="Refresh" styleClass="secondary-btn" onAction="#handleRefresh"/>
+        </HBox>
+    </VBox>
+
+    <!-- Status -->
+    <Label fx:id="statusLabel" style="-fx-text-fill: -fx-text-muted;"/>
+    <TextArea fx:id="logArea" editable="false" prefHeight="100" styleClass="message-area" promptText="Freeze activity log..."/>
+</VBox>

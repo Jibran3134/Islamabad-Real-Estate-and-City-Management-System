@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.myapp.controller.PropertySearchViewController"
+      spacing="15" style="-fx-background-color: -fx-bg-dark;">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="UC4: Search Properties with Ranking (NON-CRUD)" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Close" styleClass="danger-btn" onAction="#handleClose"/>
+    </HBox>
+    <Separator/>
+
+    <!-- Search Filters -->
+    <VBox styleClass="card-dark" spacing="12">
+        <Label text="Search Filters" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+        <GridPane hgap="15" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="12"/>
+                <ColumnConstraints percentWidth="38"/>
+                <ColumnConstraints percentWidth="12"/>
+                <ColumnConstraints percentWidth="38"/>
+            </columnConstraints>
+
+            <Label text="Location:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label-gold"/>
+            <TextField fx:id="locationField" promptText="e.g., F-7, G-10" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
+
+            <Label text="Sector:" GridPane.rowIndex="0" GridPane.columnIndex="2" styleClass="label-gold"/>
+            <ComboBox fx:id="sectorCombo" GridPane.rowIndex="0" GridPane.columnIndex="3" styleClass="combo-box" maxWidth="Infinity"/>
+
+            <Label text="Min Price:" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="label-gold"/>
+            <TextField fx:id="minPriceField" promptText="PKR" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="text-field"/>
+
+            <Label text="Max Price:" GridPane.rowIndex="1" GridPane.columnIndex="2" styleClass="label-gold"/>
+            <TextField fx:id="maxPriceField" promptText="PKR" GridPane.rowIndex="1" GridPane.columnIndex="3" styleClass="text-field"/>
+
+            <Label text="Type:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label-gold"/>
+            <ComboBox fx:id="typeCombo" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="combo-box" maxWidth="Infinity"/>
+        </GridPane>
+
+        <HBox spacing="15" alignment="CENTER">
+            <Button text="SEARCH" styleClass="primary-btn" onAction="#handleSearch" prefWidth="140"/>
+            <Button text="CLEAR" styleClass="secondary-btn" onAction="#handleClearFilters" prefWidth="120"/>
+            <Button text="SHOW ALL" styleClass="outline-btn" onAction="#handleReset" prefWidth="120"/>
+        </HBox>
+    </VBox>
+
+    <!-- Results Summary -->
+    <Label fx:id="resultsLabel" style="-fx-text-fill: -fx-gold; -fx-font-weight: bold; -fx-font-size: 14px;"/>
+
+    <!-- Results Table -->
+    <TableView fx:id="resultsTable" prefHeight="300" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="RANK" fx:id="colRank" prefWidth="70"/>
+            <TableColumn text="SCORE" fx:id="colScore" prefWidth="80"/>
+            <TableColumn text="TITLE" fx:id="colTitle" prefWidth="220"/>
+            <TableColumn text="LOCATION" fx:id="colLocation" prefWidth="150"/>
+            <TableColumn text="PRICE (PKR)" fx:id="colPrice" prefWidth="140"/>
+            <TableColumn text="TYPE" fx:id="colType" prefWidth="110"/>
+            <TableColumn text="SECTOR" fx:id="colSector" prefWidth="70"/>
+        </columns>
+    </TableView>
+
+    <!-- Ranking Info -->
+    <VBox styleClass="card-dark" spacing="4">
+        <Label text="Ranking Formula (NON-CRUD)" style="-fx-font-weight: bold; -fx-text-fill: -fx-gold; -fx-font-size: 13px;"/>
+        <Label text="Score = (Matched Filters) x 10  |  Location: +10  |  Price: +10  |  Type: +10  |  Sector: +10  |  Max: 40/40"
+               style="-fx-text-fill: -fx-text-muted; -fx-font-size: 12px;"/>
+        <Label fx:id="rankingInfoLabel" style="-fx-text-fill: -fx-text-light; -fx-font-size: 11px;"/>
+    </VBox>
+
+    <!-- Log -->
+    <TextArea fx:id="messageArea" editable="false" prefHeight="80" styleClass="message-area" promptText="System messages..."/>
+</VBox>
