@@ -135,3 +135,39 @@ INSERT INTO Users (role_id, full_name, email, password_hash, status, phone_numbe
 INSERT INTO Property (sector_id, agent_id, title, description, price, property_type, listing_status, selling_method, created_at) VALUES
     (6, 1, 'House in F-6', '5 Marla house with 3 beds',  15000000.00, 'Residential', 'For Sale', 'Fixed Price', '2026-01-10 09:00:00'),
     (5, 2, 'Plot in F-7',  '10 Marla residential plot',  22000000.00, 'Residential', 'For Sale', 'Bidding',     '2026-01-15 10:00:00');
+------------------------------------------------------------------------------------------------------------------------
+--USE CASE 01
+-- Run these queries in SQL Server
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='sectors' AND xtype='U')
+BEGIN
+CREATE TABLE sectors (
+                         sector_id INT PRIMARY KEY IDENTITY(1,1),
+                         sector_name VARCHAR(50) NOT NULL,
+                         capacity_limit INT NOT NULL DEFAULT 100,
+                         current_property_count INT NOT NULL DEFAULT 0,
+                         status VARCHAR(20) DEFAULT 'ACTIVE',
+                         last_updated DATETIME DEFAULT GETDATE()
+);
+END
+
+-- Create audit_logs table if it doesn't exist
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='audit_logs' AND xtype='U')
+BEGIN
+CREATE TABLE audit_logs (
+                            log_id INT PRIMARY KEY IDENTITY(1,1),
+                            sector_id INT FOREIGN KEY REFERENCES sectors(sector_id),
+                            authority_id INT NOT NULL,
+                            action VARCHAR(255) NOT NULL,
+                            timestamp DATETIME DEFAULT GETDATE()
+);
+END
+
+-- Sample data (only if table is empty)
+IF NOT EXISTS (SELECT 1 FROM sectors)
+BEGIN
+INSERT INTO sectors (sector_name, capacity_limit, current_property_count) VALUES
+                                                                              ('F-7', 500, 320),
+                                                                              ('G-10', 400, 410),
+                                                                              ('E-11', 600, 450),
+                                                                              ('D-12', 350, 200);
+END
