@@ -3,12 +3,14 @@ package com.myapp.controller;
 import com.myapp.model.Sector;
 import com.myapp.service.SectorService;
 import com.myapp.service.SectorService.UpdateResult;
+import com.myapp.service.SectorService.FreezeResult;
+import com.myapp.repository.SectorRepository.SectorStatistics;
 import java.sql.SQLException;
 import java.util.List;
 
 /**
  * GRASP: CONTROLLER PATTERN
- * Handles all system events for UC1 - Define Sector Capacity Limits
+ * Handles all system events for UC1 and UC2
  * Acts as intermediary between UI and Service layer
  * GRASP: LOW COUPLING - Controller only calls service, never database directly
  */
@@ -22,6 +24,8 @@ public class SectorController {
         this.sectorService = new SectorService();
         this.currentAuthorityId = authorityId;
     }
+    
+    // ========== UC1 METHODS ==========
     
     // UC1 STEP 1 - Get all sectors for display
     public List<Sector> getAllSectors() throws SQLException {
@@ -47,5 +51,42 @@ public class SectorController {
         
         // Delegate to service for business logic
         return sectorService.updateSectorCapacity(sectorId, capacityLimit, currentAuthorityId);
+    }
+    
+    // ========== UC2 METHODS ==========
+    
+    /**
+     * UC2 SD1: Get sector statistics for dashboard
+     * GRASP Controller - handles UC2 system event: openSectorDashboard()
+     */
+    public List<SectorStatistics> getSectorStatistics() throws SQLException {
+        return sectorService.getSectorStatistics();
+    }
+    
+    /**
+     * UC2 Main: Freeze overloaded sector
+     * GRASP Controller - handles UC2 system event: freezeSector()
+     * 
+     * @param sectorId - ID of the sector to freeze
+     * @param overrideWarning - true to freeze even if sector is not overloaded
+     * @return FreezeResult with success/failure status and message
+     */
+    public FreezeResult freezeSector(int sectorId, boolean overrideWarning) throws SQLException {
+        // Basic validation at controller level
+        if (sectorId <= 0) {
+            return new FreezeResult(false, "Invalid sector ID", false);
+        }
+        
+        // Delegate to service for business logic
+        return sectorService.freezeSector(sectorId, currentAuthorityId, overrideWarning);
+    }
+    
+    /**
+     * UC2: Check if sector is overloaded (utility method)
+     * Used by UI to show overload status before freeze
+     */
+    public boolean isSectorOverloaded(int sectorId) throws SQLException {
+        Sector sector = sectorService.getSectorById(sectorId);
+        return sector != null && sector.isOverloaded();
     }
 }

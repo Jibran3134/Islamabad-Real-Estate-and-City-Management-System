@@ -208,6 +208,121 @@ public class PropertyRepository {
         return properties;
     }
 
+    // ========== UC4 KE LIYE NAYE METHODS ==========
+    
+    /**
+     * UC4 - Fetch all active (For Sale) properties for search
+     * Uses existing Property table and mapRow() — no redundancy
+     * GRASP: INFORMATION EXPERT - PropertyRepository handles property data
+     */
+    public List<Property> findAllActiveProperties() throws SQLException {
+        List<Property> properties = new ArrayList<>();
+        String query = "SELECT * FROM Property WHERE listing_status = 'For Sale' ORDER BY created_at DESC";
+        
+        try (Connection conn = dbConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            
+            while (rs.next()) {
+                properties.add(mapRow(rs));  // Reuses existing mapRow() — DRY principle
+            }
+        }
+        return properties;
+    }
+
+    // ========== UC3 KE LIYE NAYE METHODS ==========
+    
+    /**
+     * UC3 SD4 step 6: savePropertyWithTransaction()
+     * Saves new property listing AND updates sector count in a SINGLE TRANSACTION.
+     * If either fails, both are rolled back (Alt Scenario 3 fix).
+     * 
+     * Uses existing Property table schema:
+     *   Property(property_id, sector_id, agent_id, title, description, price, 
+     *            property_type, location, listing_status, selling_method, created_at)
+     * 
+     * @return generated property_id, or -1 on failure
+     */
+    public int savePropertyWithTransaction(Property property, List<String> imagePaths) throws SQLException {
+        Connection conn = null;
+        try {
+            conn = dbConnection.getConnection();
+            conn.setAutoCommit(false);  // Begin transaction
+            
+            // Step 1: Insert property record (using existing Property table columns)
+            String propertyQuery = "INSERT INTO Property (sector_id, agent_id, title, description, price, " +
+                                   "property_type, location, listing_status, selling_method, created_at) " +
+                                   "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
+            
+            int propertyId;
+            try (PreparedStatement pstmt = conn.prepareStatement(propertyQuery, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setInt(1, property.getSectorId());
+                pstmt.setInt(2, property.getAgentId());
+                pstmt.setString(3, property.getTitle());
+                pstmt.setString(4, property.getDescription());
+                pstmt.setBigDecimal(5, property.getPrice());
+                pstmt.setString(6, property.getPropertyType());
+                pstmt.setString(7, property.getLocation());
+                pstmt.setString(8, property.getListingStatus() != null ? property.getListingStatus() : "For Sale");
+                pstmt.setString(9, property.getSellingMethod() != null ? property.getSellingMethod() : "Fixed Price");
+                
+                pstmt.executeUpdate();
+                
+                // Get generated property ID
+                ResultSet keys = pstmt.getGeneratedKeys();
+                if (keys.next()) {
+                    propertyId = keys.getInt(1);
+                } else {
+                    conn.rollback();
+                    return -1;
+                }
+            }
+            
+            // Step 2: Insert image records if any (property_images table)
+            if (imagePaths != null && !imagePaths.isEmpty()) {
+                String imageQuery = "INSERT INTO property_images (property_id, image_path, uploaded_at) VALUES (?, ?, GETDATE())";
+                try (PreparedStatement pstmt = conn.prepareStatement(imageQuery)) {
+                    for (String imagePath : imagePaths) {
+                        pstmt.setInt(1, propertyId);
+                        pstmt.setString(2, imagePath);
+                        pstmt.addBatch();
+                    }
+                    pstmt.executeBatch();
+                }
+            }
+            
+            // Step 3: Update sector property count (uses main Sector table)
+            String updateSectorQuery = "UPDATE Sector SET current_count = current_count + 1 WHERE sector_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(updateSectorQuery)) {
+                pstmt.setInt(1, property.getSectorId());
+                pstmt.executeUpdate();
+            }
+            
+            conn.commit();  // All 3 steps succeeded — commit transaction
+            return propertyId;
+            
+        } catch (SQLException e) {
+            // Alt Scenario 3: rollbackTransaction() — undo ALL changes on failure
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    System.err.println("[ROLLBACK] Property save transaction rolled back: " + e.getMessage());
+                } catch (SQLException rollbackEx) {
+                    System.err.println("[CRITICAL] Rollback failed: " + rollbackEx.getMessage());
+                }
+            }
+            throw e;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    // Ignore
+                }
+            }
+        }
+    }
+    
     /**
      * Helper: maps a ResultSet row into a Property object.
      * Keeps the code DRY — used by findById() and findPropertiesOpenForBidding().

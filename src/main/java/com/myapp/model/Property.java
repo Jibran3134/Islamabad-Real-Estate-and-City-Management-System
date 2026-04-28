@@ -84,6 +84,24 @@ public class Property {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
+    // ── UC4: Ranking Fields (NON-CRUD) ───────────────────────────────
+    
+    private int relevanceScore;     // How many filters matched × 10
+    private int rankPosition;       // 1, 2, 3... (rank in search results)
+    
+    public int getRelevanceScore() { return relevanceScore; }
+    public void setRelevanceScore(int relevanceScore) { this.relevanceScore = relevanceScore; }
+    
+    public int getRankPosition() { return rankPosition; }
+    public void setRankPosition(int rankPosition) { this.rankPosition = rankPosition; }
+    
+    /**
+     * Check if this is a new listing (less than 7 days old)
+     */
+    public boolean isNewListing() {
+        return createdAt != null && LocalDateTime.now().minusDays(7).isBefore(createdAt);
+    }
+
     @Override
     public String toString() {
         return "Property{" +
