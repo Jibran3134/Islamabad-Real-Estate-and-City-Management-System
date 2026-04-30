@@ -26,12 +26,8 @@ public class JavaFXLauncher extends Application {
         primaryStage = stage;
 
         // Test database connection
-        try {
-            DatabaseConnection.getInstance().getConnection();
-            System.out.println("[INFO] Database connected successfully!");
-        } catch (SQLException e) {
-            System.err.println("[ERROR] Database connection failed: " + e.getMessage());
-            showErrorAndExit("Cannot connect to database.\n" + e.getMessage());
+        if (!DatabaseConnection.getInstance().testConnection()) {
+            showErrorAndExit("Cannot connect to database.\nCheck SQL Server is running.");
             return;
         }
 
@@ -40,8 +36,9 @@ public class JavaFXLauncher extends Application {
 
         // Configure stage
         stage.setTitle("Islamabad Real Estate Management System");
-        stage.setMinWidth(1024);
-        stage.setMinHeight(768);
+        stage.setMinWidth(1200);
+        stage.setMinHeight(800);
+        stage.setMaximized(true);
         stage.setOnCloseRequest(e -> {
             Platform.exit();
             System.exit(0);
@@ -56,7 +53,7 @@ public class JavaFXLauncher extends Application {
                 JavaFXLauncher.class.getResource("/fxml/Login.fxml")
             );
             Parent root = loader.load();
-            Scene scene = new Scene(root, 1024, 768);
+            Scene scene = new Scene(root, 1400, 900);
             scene.getStylesheets().add(
                 JavaFXLauncher.class.getResource("/css/style.css").toExternalForm()
             );
@@ -77,7 +74,7 @@ public class JavaFXLauncher extends Application {
             DashboardController controller = loader.getController();
             controller.setUserInfo(userId, role, name);
 
-            Scene scene = new Scene(root, 1200, 800);
+            Scene scene = new Scene(root, 1400, 900);
             scene.getStylesheets().add(
                 JavaFXLauncher.class.getResource("/css/style.css").toExternalForm()
             );

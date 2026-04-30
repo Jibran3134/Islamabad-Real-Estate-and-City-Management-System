@@ -5,7 +5,6 @@ import java.sql.*;
 public class DatabaseConnection {
     
     private static DatabaseConnection instance;
-    private Connection connection;
     
     private static final String SERVER   = "DESKTOP-ETHK7B9\\SQLEXPRESS";
     private static final String DATABASE = "islamabad_real_estate";
@@ -13,8 +12,6 @@ public class DatabaseConnection {
     
     // Using Windows Authentication (no username/password needed)
     private static final String URL = "jdbc:sqlserver://" + SERVER + ":" + PORT + ";databaseName=" + DATABASE + ";encrypt=true;trustServerCertificate=true;integratedSecurity=true;";
-    private static final String USERNAME = null;
-    private static final String PASSWORD = null;
     
     private DatabaseConnection() {
         try {
@@ -31,18 +28,26 @@ public class DatabaseConnection {
         return instance;
     }
     
-    // NON-STATIC method - isko instance se call karna hai
+    /**
+     * Returns a NEW connection each time.
+     * This is safe for try-with-resources usage in repositories.
+     * Each repository method opens and closes its own connection.
+     */
     public Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection(URL);
-            System.out.println("Database connected!");
-        }
-        return connection;
+        Connection conn = DriverManager.getConnection(URL);
+        return conn;
     }
     
-    public void closeConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            connection.close();
+    /**
+     * Test method - checks if database is reachable
+     */
+    public boolean testConnection() {
+        try (Connection conn = getConnection()) {
+            System.out.println("[INFO] Database connected successfully to: " + DATABASE);
+            return true;
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database connection failed: " + e.getMessage());
+            return false;
         }
     }
 }

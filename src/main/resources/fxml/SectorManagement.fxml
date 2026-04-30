@@ -6,54 +6,110 @@
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.myapp.controller.SectorManagementController"
-      spacing="15" style="-fx-background-color: -fx-bg-dark;">
-    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+      spacing="0" style="-fx-background-color: #080808;">
 
-    <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="15">
-        <Label text="UC1: Define Sector Capacity" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+    <!-- Top Bar -->
+    <HBox style="-fx-background-color: #000000; -fx-border-color: #D4AF37; -fx-border-width: 0 0 3 0;"
+          spacing="20" alignment="CENTER_LEFT">
+        <padding><Insets top="14" right="30" bottom="14" left="30"/></padding>
+        <Label text="✦ Sector Management" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #D4AF37;"/>
+        <Label text="UC1: Define Sector Capacity Limits" style="-fx-font-size: 14px; -fx-text-fill: #999999;"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button text="Close" styleClass="danger-btn" onAction="#handleClose"/>
+        <Button text="↻  Refresh"
+                onAction="#handleRefresh"
+                style="-fx-background-color: #222222; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-color: #555555; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 18; -fx-cursor: hand;"/>
+        <Button text="✕  Close"
+                onAction="#handleClose"
+                style="-fx-background-color: transparent; -fx-text-fill: #D4AF37; -fx-border-color: #D4AF37; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 18; -fx-cursor: hand; -fx-font-weight: bold;"/>
     </HBox>
-    <Separator/>
 
-    <!-- Sector List -->
-    <Label text="All Sectors" styleClass="label-gold"/>
-    <TableView fx:id="sectorTable" prefHeight="250">
-        <columns>
-            <TableColumn text="ID" fx:id="colId" prefWidth="60"/>
-            <TableColumn text="Sector Name" fx:id="colName" prefWidth="200"/>
-            <TableColumn text="Current Capacity" fx:id="colCapacity" prefWidth="140"/>
-            <TableColumn text="Property Count" fx:id="colCount" prefWidth="140"/>
-            <TableColumn text="Status" fx:id="colStatus" prefWidth="120"/>
-        </columns>
-    </TableView>
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: #080808; -fx-border-color: transparent;">
+        <VBox spacing="24" style="-fx-background-color: #080808;">
+            <padding><Insets top="30" right="40" bottom="40" left="40"/></padding>
 
-    <!-- Update Form -->
-    <VBox styleClass="card-dark" spacing="12">
-        <Label text="Update Sector Capacity" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
-        <GridPane hgap="15" vgap="10">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="20"/>
-                <ColumnConstraints percentWidth="30"/>
-                <ColumnConstraints percentWidth="20"/>
-                <ColumnConstraints percentWidth="30"/>
-            </columnConstraints>
+            <!-- Sector Table Card -->
+            <VBox spacing="14" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #D4AF37; -fx-border-width: 2; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                <Label text="All Sectors" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
+                <Region prefHeight="3" maxWidth="80" style="-fx-background-color: #D4AF37;"/>
+                <TableView fx:id="sectorTable" VBox.vgrow="ALWAYS" prefHeight="260">
+                    <columns>
+                        <TableColumn text="ID"             fx:id="colId"       minWidth="55" maxWidth="75"/>
+                        <TableColumn text="Sector Name"    fx:id="colName"     minWidth="180"/>
+                        <TableColumn text="Capacity Limit" fx:id="colCapacity" minWidth="130"/>
+                        <TableColumn text="Properties"     fx:id="colCount"    minWidth="110"/>
+                        <TableColumn text="Status"         fx:id="colStatus"   minWidth="100"/>
+                    </columns>
+                </TableView>
+                <Label text="💡 Click a row to select a sector and see Smart Capacity Advisory" style="-fx-text-fill: #888888; -fx-font-size: 12px;"/>
+            </VBox>
 
-            <Label text="Sector ID:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label-gold"/>
-            <TextField fx:id="sectorIdField" promptText="Select from table" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
+            <!-- Two Column: Update Form (left) + Smart Advisor (right) -->
+            <HBox spacing="24">
 
-            <Label text="New Capacity:" GridPane.rowIndex="0" GridPane.columnIndex="2" styleClass="label-gold"/>
-            <TextField fx:id="capacityField" promptText="Enter new capacity" GridPane.rowIndex="0" GridPane.columnIndex="3" styleClass="text-field"/>
-        </GridPane>
+                <!-- Update Capacity Form — white card -->
+                <VBox spacing="16" HBox.hgrow="ALWAYS" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #D4AF37; -fx-border-width: 2; -fx-padding: 24;">
+                    <Label text="Update Capacity" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
+                    <Region prefHeight="3" maxWidth="80" style="-fx-background-color: #D4AF37;"/>
 
-        <HBox spacing="15" alignment="CENTER">
-            <Button text="Update Capacity" styleClass="primary-btn" onAction="#handleUpdateCapacity"/>
-            <Button text="Refresh List" styleClass="secondary-btn" onAction="#handleRefresh"/>
-        </HBox>
-    </VBox>
+                    <VBox spacing="6">
+                        <Label text="Sector ID" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="sectorIdField" promptText="Click a row above to select"
+                                   style="-fx-background-color: #FFFFFF; -fx-text-fill: #111111; -fx-border-color: #CCCCCC; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10 14; -fx-font-size: 14px; -fx-prompt-text-fill: #888888;"
+                                   prefHeight="40"/>
+                    </VBox>
+                    <VBox spacing="6">
+                        <Label text="New Capacity Limit" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="capacityField" promptText="Type value — advisor updates live"
+                                   style="-fx-background-color: #FFFFFF; -fx-text-fill: #111111; -fx-border-color: #CCCCCC; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10 14; -fx-font-size: 14px; -fx-prompt-text-fill: #888888;"
+                                   prefHeight="40"/>
+                    </VBox>
 
-    <!-- Status -->
-    <Label fx:id="statusLabel" style="-fx-text-fill: -fx-text-muted; -fx-font-size: 13px;"/>
-    <TextArea fx:id="logArea" editable="false" prefHeight="120" styleClass="message-area" promptText="Activity log..."/>
+                    <VBox spacing="10">
+                        <Button text="⚡  Update Capacity"
+                                onAction="#handleUpdateCapacity"
+                                prefHeight="46" maxWidth="Infinity"
+                                style="-fx-background-color: linear-gradient(to bottom, #F5D76E, #D4AF37, #B8960C); -fx-text-fill: #000000; -fx-font-weight: bold; -fx-font-size: 15px; -fx-border-color: #F5D76E; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 12 20; -fx-cursor: hand;"/>
+                        <Button text="🔍  Analyze (Manual)"
+                                onAction="#handleAnalyze"
+                                prefHeight="38" maxWidth="Infinity"
+                                style="-fx-background-color: #222222; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-font-size: 14px; -fx-border-color: #555555; -fx-border-width: 2; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 10 20; -fx-cursor: hand;"/>
+                    </VBox>
+                </VBox>
+
+                <!-- NON-CRUD: Smart Capacity Advisor Panel — dark card -->
+                <VBox spacing="14" HBox.hgrow="ALWAYS" style="-fx-background-color: #0D0D0D; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #D4AF37; -fx-border-width: 2; -fx-padding: 24;">
+                    <Label text="🧠 Smart Capacity Advisor" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #D4AF37;"/>
+                    <Label text="NON-CRUD: Real-time risk analysis &amp; recommendation" style="-fx-font-size: 12px; -fx-text-fill: #777777;"/>
+                    <Region prefHeight="2" maxWidth="200" style="-fx-background-color: #D4AF37;"/>
+
+                    <VBox spacing="8">
+                        <Label fx:id="advisoryRiskLabel"
+                               text="Risk: — (select a sector, then type capacity)"
+                               style="-fx-text-fill: #AAAAAA; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+                        <Label fx:id="advisoryRecommendLabel"
+                               text="💡 Recommendation: —"
+                               style="-fx-text-fill: #CCCCCC; -fx-font-size: 13px;"/>
+                    </VBox>
+
+                    <TextArea fx:id="advisoryTextArea" editable="false" prefHeight="130"
+                              promptText="Select a sector and type a capacity value&#10;to see live analysis:&#10;• Current usage %&#10;• Projected usage after change&#10;• Risk score (0–100)&#10;• Safe capacity recommendation"
+                              style="-fx-background-color: #1A1A1A; -fx-text-fill: #CCCCCC; -fx-border-color: #333333; -fx-font-size: 12px; -fx-background-radius: 8;"/>
+
+                    <Button text="✅  Apply Recommendation"
+                            onAction="#handleApplyRecommendation"
+                            prefHeight="38" maxWidth="Infinity"
+                            style="-fx-background-color: linear-gradient(to bottom, #F5D76E, #D4AF37, #B8960C); -fx-text-fill: #000000; -fx-font-weight: bold; -fx-font-size: 14px; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 10 20; -fx-cursor: hand;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Status + Log -->
+            <VBox spacing="10" style="-fx-background-color: #111111; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #333333; -fx-border-width: 1; -fx-padding: 20;">
+                <Label fx:id="statusLabel" text="" style="-fx-text-fill: #D4AF37; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <TextArea fx:id="logArea" editable="false" prefHeight="100"
+                          style="-fx-background-color: #111111; -fx-text-fill: #AAAAAA; -fx-border-color: #D4AF37; -fx-border-width: 2; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-family: 'Consolas'; -fx-font-size: 12px;"
+                          promptText="Activity log..."/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
 </VBox>

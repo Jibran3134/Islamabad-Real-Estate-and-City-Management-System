@@ -57,12 +57,15 @@ public class DashboardController implements Initializable {
                 addMenuButton("User Management", "Manage all user accounts (UC11)", "/fxml/UserManagement.fxml");
                 addMenuButton("Sector Management", "Define capacity limits (UC1)", "/fxml/SectorManagement.fxml");
                 addMenuButton("Sector Dashboard", "Monitor & freeze sectors (UC2)", "/fxml/SectorDashboard.fxml");
+                addMenuButton("Add Property", "List new property (UC3)", "/fxml/AddPropertyListing.fxml");
                 addMenuButton("Property Search", "Search with ranking (UC4)", "/fxml/PropertySearch.fxml");
+                addMenuButton("Bidding Dashboard", "Manage bidding sessions (UC6-9)", "/fxml/BiddingDashboard.fxml");
                 break;
             case "authority":
                 addMenuButton("Sector Management", "Define capacity limits (UC1)", "/fxml/SectorManagement.fxml");
                 addMenuButton("Sector Dashboard", "Freeze overloaded sectors (UC2)", "/fxml/SectorDashboard.fxml");
                 addMenuButton("Property Search", "Search with ranking (UC4)", "/fxml/PropertySearch.fxml");
+                addMenuButton("Bidding Dashboard", "View bidding sessions (UC6-9)", "/fxml/BiddingDashboard.fxml");
                 break;
             case "agent":
                 addMenuButton("Add Property", "List new property (UC3)", "/fxml/AddPropertyListing.fxml");
@@ -78,34 +81,42 @@ public class DashboardController implements Initializable {
     }
 
     private void addMenuButton(String title, String description, String fxmlPath) {
-        VBox card = new VBox(8);
-        card.setPrefSize(280, 110);
+        VBox card = new VBox(12);
+        card.setPrefSize(320, 150);
         card.setStyle(
-            "-fx-background-color: -fx-bg-card; -fx-border-color: -fx-gold; " +
-            "-fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; " +
-            "-fx-padding: 18; -fx-cursor: hand;"
+            "-fx-background-color: #FFFFFF; -fx-border-color: #D4AF37; " +
+            "-fx-border-width: 3; -fx-border-radius: 16; -fx-background-radius: 16; " +
+            "-fx-padding: 28; -fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);"
         );
 
         Label titleLabel = new Label(title);
-        titleLabel.setStyle("-fx-text-fill: -fx-gold; -fx-font-size: 16px; -fx-font-weight: bold;");
+        titleLabel.setStyle("-fx-text-fill: #1A1A1A; -fx-font-size: 20px; -fx-font-weight: bold;");
 
         Label descLabel = new Label(description);
-        descLabel.setStyle("-fx-text-fill: -fx-text-muted; -fx-font-size: 12px;");
+        descLabel.setStyle("-fx-text-fill: #555555; -fx-font-size: 14px;");
         descLabel.setWrapText(true);
 
-        card.getChildren().addAll(titleLabel, descLabel);
+        // Gold accent line
+        javafx.scene.layout.Region accent = new javafx.scene.layout.Region();
+        accent.setPrefHeight(3);
+        accent.setMaxWidth(60);
+        accent.setStyle("-fx-background-color: #D4AF37; -fx-background-radius: 2;");
 
-        // Hover effect
+        card.getChildren().addAll(titleLabel, accent, descLabel);
+
+        // Hover effect — gold glow
         card.setOnMouseEntered(e -> card.setStyle(
-            "-fx-background-color: rgba(212,175,55,0.15); -fx-border-color: -fx-gold; " +
-            "-fx-border-width: 2; -fx-border-radius: 10; -fx-background-radius: 10; " +
-            "-fx-padding: 18; -fx-cursor: hand; " +
-            "-fx-effect: dropshadow(gaussian, rgba(212,175,55,0.4), 12, 0, 0, 0);"
+            "-fx-background-color: #FFF8E1; -fx-border-color: #F5D76E; " +
+            "-fx-border-width: 3; -fx-border-radius: 16; -fx-background-radius: 16; " +
+            "-fx-padding: 28; -fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(212,175,55,0.6), 25, 0, 0, 0);"
         ));
         card.setOnMouseExited(e -> card.setStyle(
-            "-fx-background-color: -fx-bg-card; -fx-border-color: -fx-gold; " +
-            "-fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; " +
-            "-fx-padding: 18; -fx-cursor: hand;"
+            "-fx-background-color: #FFFFFF; -fx-border-color: #D4AF37; " +
+            "-fx-border-width: 3; -fx-border-radius: 16; -fx-background-radius: 16; " +
+            "-fx-padding: 28; -fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);"
         ));
 
         card.setOnMouseClicked(e -> openScreen(fxmlPath, title));
@@ -119,11 +130,12 @@ public class DashboardController implements Initializable {
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle(title + " - IRMS");
-            Scene scene = new Scene(root, 1100, 700);
+            Scene scene = new Scene(root);
             scene.getStylesheets().add(
                 getClass().getResource("/css/style.css").toExternalForm()
             );
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

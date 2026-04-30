@@ -98,8 +98,8 @@ public class AddPropertyListingController implements Initializable {
                 showStatus("Validation PASSED - Ready to submit!", false);
                 addLog("[VALID] All property fields are valid.");
             } else {
-                showStatus("Validation FAILED: " + result.getMessage(), true);
-                addLog("[INVALID] " + result.getMessage());
+                showStatus("Validation FAILED: " + result.getErrorMessage(), true);
+                addLog("[INVALID] " + result.getErrorMessage());
             }
         } catch (NumberFormatException e) {
             showStatus("Invalid price format.", true);
@@ -176,7 +176,7 @@ public class AddPropertyListingController implements Initializable {
 
     private void showStatus(String msg, boolean isError) {
         statusLabel.setText(msg);
-        statusLabel.setStyle(isError ? "-fx-text-fill: -fx-danger;" : "-fx-text-fill: -fx-success;");
+        statusLabel.setStyle(isError ? "-fx-text-fill: #FF4757; -fx-font-weight: bold;" : "-fx-text-fill: #2ED573; -fx-font-weight: bold;");
     }
 
     private void addLog(String message) {
