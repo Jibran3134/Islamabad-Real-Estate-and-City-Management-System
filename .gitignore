@@ -40,3 +40,13 @@ target/
 *.class
 *.jar
 !backend/lib/*.jar
+
+### Local Maven config ###
+.mvn/
+maven.config
+jvm.config
+settings.xml
+
+### Local SDKs ###
+sdk/
+JavaFX-*/
