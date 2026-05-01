@@ -120,9 +120,14 @@ public class PropertyService {
             
             if (savedPropertyId > 0) {
                 // Step 6: Log the listing creation (Pure Fabrication)
-                auditLogRepository.logUpdate(sectorId, agentId, 
-                    "PROPERTY_LISTING_CREATED - Property ID: " + savedPropertyId + 
-                    ", Title: " + title + ", Price: " + price);
+                // Non-blocking — property save succeeds even if logging fails
+                try {
+                    auditLogRepository.logUpdate(sectorId, agentId, 
+                        "PROPERTY_LISTING_CREATED - Property ID: " + savedPropertyId + 
+                        ", Title: " + title + ", Price: " + price);
+                } catch (Exception logEx) {
+                    System.err.println("[AUDIT] Logging failed but property was saved: " + logEx.getMessage());
+                }
                 
                 return new AddPropertyResult(true, 
                     "Property listing added successfully! Property ID: " + savedPropertyId, savedPropertyId);

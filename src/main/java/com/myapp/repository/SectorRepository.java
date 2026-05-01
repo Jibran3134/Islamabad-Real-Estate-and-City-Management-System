@@ -236,6 +236,14 @@ public class SectorRepository {
         public int currentCount;
         public String status;
         public double usagePercentage;
+
+        // Getters required by SectorDashboardController
+        public int getSectorId() { return sectorId; }
+        public String getSectorName() { return sectorName; }
+        public int getCapacityLimit() { return capacityLimit; }
+        public int getPropertyCount() { return currentCount; }
+        public String getStatus() { return status; }
+        public double getUsagePercentage() { return usagePercentage; }
         
         public boolean isOverloaded() {
             return currentCount >= capacityLimit;

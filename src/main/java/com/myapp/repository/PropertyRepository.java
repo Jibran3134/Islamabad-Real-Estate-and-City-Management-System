@@ -208,12 +208,55 @@ public class PropertyRepository {
         return properties;
     }
 
-    // ========== UC4 KE LIYE NAYE METHODS ==========
-    
+    // ========== UC2 NON-CRUD: FREEZE IMPACT QUERIES ==========
+
+    /**
+     * NON-CRUD aggregate: counts active listings + sums their total value for a sector.
+     * Returns int[]{count, totalValueRounded} for use by FreezeImpact analyzer.
+     * Does NOT modify data — read-only aggregate query.
+     */
+    public int[] countAndValueActiveListingsBySector(int sectorId) throws SQLException {
+        String sql = "SELECT COUNT(*) AS cnt, COALESCE(SUM(price), 0) AS total_val " +
+                     "FROM Property WHERE sector_id = ? AND listing_status = 'For Sale'";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, sectorId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("cnt");
+                int totalVal = (int) rs.getDouble("total_val");
+                return new int[]{count, totalVal};
+            }
+        } catch (SQLException e) {
+            System.err.println("Error counting listings for sector " + sectorId + ": " + e.getMessage());
+        }
+        return new int[]{0, 0};
+    }
+
+    /**
+     * NON-CRUD aggregate: counts active bidding sessions for properties in a sector.
+     * Joins Property -> Bidding_Session to find sessions that would be disrupted.
+     * Does NOT modify data — read-only aggregate query.
+     */
+    public int countActiveBiddingSessionsBySector(int sectorId) throws SQLException {
+        String sql = "SELECT COUNT(*) AS cnt FROM Bidding_Session bs " +
+                     "JOIN Property p ON bs.property_id = p.property_id " +
+                     "WHERE p.sector_id = ? AND bs.status = 'Active'";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, sectorId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) return rs.getInt("cnt");
+        } catch (SQLException e) {
+            System.err.println("Error counting bidding sessions for sector " + sectorId + ": " + e.getMessage());
+        }
+        return 0;
+    }
+
+    // ========== UC4: SEARCH ==========
+
     /**
      * UC4 - Fetch all active (For Sale) properties for search
-     * Uses existing Property table and mapRow() — no redundancy
-     * GRASP: INFORMATION EXPERT - PropertyRepository handles property data
      */
     public List<Property> findAllActiveProperties() throws SQLException {
         List<Property> properties = new ArrayList<>();
