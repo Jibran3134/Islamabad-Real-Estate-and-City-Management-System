@@ -100,12 +100,23 @@ public class UserController {
             return "ERROR: Access denied. You do not have admin permissions.";
         }
 
+        // Check if user exists
+        User user = userService.getUserById(targetUserId);
+        if (user == null) {
+            return "ERROR: User with ID " + targetUserId + " not found. Please enter a valid User ID.";
+        }
+
+        // Check if status is already the same
+        if (user.getStatus() != null && user.getStatus().equalsIgnoreCase(newStatus)) {
+            return "ERROR: User " + targetUserId + " (" + user.getFullName() + ") already has status '" + newStatus + "'. No change needed.";
+        }
+
         boolean updated = userService.updateUserStatus(targetUserId, newStatus);
 
         if (!updated) {
             return "ERROR: Could not update status. Please try again.";
         }
 
-        return "SUCCESS: User " + targetUserId + " status updated to " + newStatus + ".";
+        return "SUCCESS: User " + targetUserId + " (" + user.getFullName() + ") status updated from '" + user.getStatus() + "' to '" + newStatus + "'.";
     }
 }

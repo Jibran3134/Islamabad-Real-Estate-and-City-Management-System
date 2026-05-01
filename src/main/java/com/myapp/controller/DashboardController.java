@@ -32,6 +32,13 @@ public class DashboardController implements Initializable {
     private String currentRole;
     private String currentName;
 
+    // Static fields so other controllers (e.g. BiddingDashboard) can access the current user's role
+    private static String activeUserRole = "buyer";
+    private static int activeUserId = 0;
+
+    public static String getActiveUserRole() { return activeUserRole; }
+    public static int getActiveUserId() { return activeUserId; }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Will be called after FXML loads
@@ -41,6 +48,10 @@ public class DashboardController implements Initializable {
         this.currentUserId = userId;
         this.currentRole = role;
         this.currentName = name;
+
+        // Update static fields for cross-controller access
+        activeUserRole = role.toLowerCase();
+        activeUserId = userId;
 
         userLabel.setText("Welcome, " + name);
         roleLabel.setText(role.toUpperCase());
@@ -54,22 +65,17 @@ public class DashboardController implements Initializable {
 
         switch (currentRole.toLowerCase()) {
             case "admin":
-                addMenuButton("User Management", "Manage all user accounts (UC11)", "/fxml/UserManagement.fxml");
-                addMenuButton("Sector Management", "Define capacity limits (UC1)", "/fxml/SectorManagement.fxml");
-                addMenuButton("Sector Dashboard", "Monitor & freeze sectors (UC2)", "/fxml/SectorDashboard.fxml");
-                addMenuButton("Add Property", "List new property (UC3)", "/fxml/AddPropertyListing.fxml");
-                addMenuButton("Property Search", "Search with ranking (UC4)", "/fxml/PropertySearch.fxml");
-                addMenuButton("Bidding Dashboard", "Manage bidding sessions (UC6-9)", "/fxml/BiddingDashboard.fxml");
+                // Admin dashboard is empty — dashboards will be created later
+                Label comingSoon = new Label("Admin dashboards coming soon...");
+                comingSoon.setStyle("-fx-text-fill: #999999; -fx-font-size: 18px; -fx-font-style: italic;");
+                menuGrid.getChildren().add(comingSoon);
                 break;
             case "authority":
+                addMenuButton("User Management", "Manage all user accounts (UC11)", "/fxml/UserManagement.fxml");
                 addMenuButton("Sector Management", "Define capacity limits (UC1)", "/fxml/SectorManagement.fxml");
                 addMenuButton("Sector Dashboard", "Freeze overloaded sectors (UC2)", "/fxml/SectorDashboard.fxml");
-                addMenuButton("Property Search", "Search with ranking (UC4)", "/fxml/PropertySearch.fxml");
-                addMenuButton("Bidding Dashboard", "View bidding sessions (UC6-9)", "/fxml/BiddingDashboard.fxml");
                 break;
             case "agent":
-                addMenuButton("Add Property", "List new property (UC3)", "/fxml/AddPropertyListing.fxml");
-                addMenuButton("Property Search", "Search with ranking (UC4)", "/fxml/PropertySearch.fxml");
                 addMenuButton("Bidding Dashboard", "Manage bidding sessions (UC6-9)", "/fxml/BiddingDashboard.fxml");
                 break;
             case "buyer":

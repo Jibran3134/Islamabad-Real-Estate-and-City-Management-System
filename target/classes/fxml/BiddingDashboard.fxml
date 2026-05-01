@@ -6,62 +6,91 @@
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.myapp.controller.BiddingDashboardController"
-      spacing="15" style="-fx-background-color: -fx-bg-dark;">
-    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+      spacing="0" style="-fx-background-color: #080808;">
 
-    <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="15">
-        <Label text="UC6-9: Bidding Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+    <!-- Top Bar -->
+    <HBox style="-fx-background-color: #000000; -fx-border-color: #D4AF37; -fx-border-width: 0 0 3 0;"
+          spacing="20" alignment="CENTER_LEFT">
+        <padding><Insets top="14" right="30" bottom="14" left="30"/></padding>
+        <Label text="✦ Bidding Dashboard" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #D4AF37;"/>
+        <Label text="UC6-9: Auction Management" style="-fx-font-size: 14px; -fx-text-fill: #999999;"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button text="Refresh" styleClass="secondary-btn" onAction="#handleRefresh"/>
-        <Button text="Close" styleClass="danger-btn" onAction="#handleClose"/>
-    </HBox>
-    <Separator/>
-
-    <!-- Active Sessions -->
-    <Label text="Active Bidding Sessions" styleClass="label-gold"/>
-    <TableView fx:id="sessionTable" prefHeight="200">
-        <columns>
-            <TableColumn text="Session ID" fx:id="colSessionId" prefWidth="90"/>
-            <TableColumn text="Property" fx:id="colProperty" prefWidth="200"/>
-            <TableColumn text="Base Price" fx:id="colBasePrice" prefWidth="130"/>
-            <TableColumn text="Highest Bid" fx:id="colHighestBid" prefWidth="130"/>
-            <TableColumn text="Status" fx:id="colSessionStatus" prefWidth="100"/>
-            <TableColumn text="End Time" fx:id="colEndTime" prefWidth="150"/>
-        </columns>
-    </TableView>
-
-    <!-- Place Bid Section -->
-    <VBox styleClass="card-dark" spacing="12">
-        <Label text="Place a Bid (UC6)" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
-        <HBox spacing="15" alignment="CENTER_LEFT">
-            <Label text="Session ID:" styleClass="label-gold"/>
-            <TextField fx:id="sessionIdField" promptText="Select from table" styleClass="text-field" prefWidth="120"/>
-            <Label text="Bid Amount (PKR):" styleClass="label-gold"/>
-            <TextField fx:id="bidAmountField" promptText="Enter your bid" styleClass="text-field" prefWidth="180"/>
-            <Button text="PLACE BID" styleClass="primary-btn" onAction="#handlePlaceBid"/>
-        </HBox>
-    </VBox>
-
-    <!-- Actions -->
-    <HBox spacing="15">
-        <VBox styleClass="card-dark" spacing="8" HBox.hgrow="ALWAYS">
-            <Label text="UC8: Close Bidding" style="-fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <TextField fx:id="closeSessionIdField" promptText="Session ID" styleClass="text-field" prefWidth="120"/>
-                <Button text="CLOSE SESSION" styleClass="danger-btn" onAction="#handleCloseBidding"/>
-            </HBox>
-        </VBox>
-        <VBox styleClass="card-dark" spacing="8" HBox.hgrow="ALWAYS">
-            <Label text="UC9: Declare Winner" style="-fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <TextField fx:id="winnerSessionIdField" promptText="Session ID" styleClass="text-field" prefWidth="120"/>
-                <Button text="DECLARE WINNER" styleClass="success-btn" onAction="#handleDeclareWinner"/>
-            </HBox>
-        </VBox>
+        <Button text="↻  Refresh" styleClass="secondary-btn" onAction="#handleRefresh"/>
+        <Button text="✕  Close" styleClass="outline-btn" onAction="#handleClose"/>
     </HBox>
 
-    <!-- Status & Log -->
-    <Label fx:id="statusLabel" style="-fx-text-fill: -fx-text-muted;"/>
-    <TextArea fx:id="logArea" editable="false" prefHeight="100" styleClass="message-area" promptText="Bidding activity log..."/>
+    <!-- Page Content -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: #080808; -fx-border-color: transparent;">
+        <VBox spacing="24" style="-fx-background-color: #080808;">
+            <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+
+            <!-- Active Sessions Table -->
+            <VBox spacing="14" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #D4AF37; -fx-border-width: 2; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                <Label text="Active Bidding Sessions" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
+                <Region prefHeight="3" maxWidth="80" style="-fx-background-color: #D4AF37;"/>
+                <TableView fx:id="sessionTable" VBox.vgrow="ALWAYS" prefHeight="240">
+                    <columns>
+                        <TableColumn text="Session ID" fx:id="colSessionId" minWidth="90"/>
+                        <TableColumn text="Property" fx:id="colProperty" minWidth="200"/>
+                        <TableColumn text="Base Price" fx:id="colBasePrice" minWidth="130"/>
+                        <TableColumn text="Highest Bid" fx:id="colHighestBid" minWidth="130"/>
+                        <TableColumn text="Status" fx:id="colSessionStatus" minWidth="100"/>
+                        <TableColumn text="End Time" fx:id="colEndTime" minWidth="150"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Place Bid Section -->
+            <VBox fx:id="placeBidSection" spacing="16" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #2ED573; -fx-border-width: 2; -fx-padding: 24;">
+                <Label text="💰  Place a Bid (UC6)" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
+                <Region prefHeight="3" maxWidth="80" style="-fx-background-color: #2ED573;"/>
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Session ID" style="-fx-text-fill: #333333; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="sessionIdField" promptText="Select from table above" styleClass="text-field" prefHeight="40"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Bid Amount (PKR)" style="-fx-text-fill: #333333; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="bidAmountField" promptText="Enter your bid amount" styleClass="text-field" prefHeight="40"/>
+                    </VBox>
+                    <VBox spacing="6" alignment="BOTTOM_LEFT">
+                        <Region prefHeight="19"/>
+                        <Button text="⚡  PLACE BID" styleClass="primary-btn" onAction="#handlePlaceBid" prefHeight="42"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Close & Declare Winner - Side by Side -->
+            <HBox spacing="24">
+                <!-- UC8: Close Bidding -->
+                <VBox fx:id="closeBiddingSection" spacing="14" HBox.hgrow="ALWAYS" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #FF4757; -fx-border-width: 2; -fx-padding: 24;">
+                    <Label text="🔒  Close Bidding (UC8)" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
+                    <Region prefHeight="3" maxWidth="60" style="-fx-background-color: #FF4757;"/>
+                    <VBox spacing="6">
+                        <Label text="Session ID" style="-fx-text-fill: #333333; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="closeSessionIdField" promptText="Enter Session ID" styleClass="text-field" prefHeight="40"/>
+                    </VBox>
+                    <Button text="🔒  CLOSE SESSION" styleClass="danger-btn" onAction="#handleCloseBidding" prefHeight="42" maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- UC9: Declare Winner -->
+                <VBox fx:id="declareWinnerSection" spacing="14" HBox.hgrow="ALWAYS" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #2ED573; -fx-border-width: 2; -fx-padding: 24;">
+                    <Label text="🏆  Declare Winner (UC9)" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
+                    <Region prefHeight="3" maxWidth="60" style="-fx-background-color: #2ED573;"/>
+                    <VBox spacing="6">
+                        <Label text="Session ID" style="-fx-text-fill: #333333; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="winnerSessionIdField" promptText="Enter Session ID" styleClass="text-field" prefHeight="40"/>
+                    </VBox>
+                    <Button text="🏆  DECLARE WINNER" styleClass="success-btn" onAction="#handleDeclareWinner" prefHeight="42" maxWidth="Infinity"/>
+                </VBox>
+            </HBox>
+
+            <!-- Activity Log -->
+            <VBox spacing="10" style="-fx-background-color: #111111; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #333333; -fx-border-width: 1; -fx-padding: 20;">
+                <Label fx:id="statusLabel" style="-fx-text-fill: #D4AF37; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <TextArea fx:id="logArea" editable="false" prefHeight="80" styleClass="message-area" promptText="Bidding activity log..."/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
 </VBox>

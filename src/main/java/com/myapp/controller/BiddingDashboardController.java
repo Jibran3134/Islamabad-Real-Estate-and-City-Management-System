@@ -9,6 +9,8 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.math.BigDecimal;
@@ -20,6 +22,10 @@ import java.util.ResourceBundle;
  * UC6-9: Bidding Dashboard - JavaFX Controller
  * UC6: Place Bid | UC8: Close Bidding | UC9: Declare Winner
  * Uses existing BidController -> BidService -> BidRepository
+ *
+ * Role-aware: hides/shows sections based on current user role.
+ *   Agent: Close Session only (bypasses timer, auto-declares winner)
+ *   Buyer: Place Bid only (no close/declare)
  */
 public class BiddingDashboardController implements Initializable {
 
@@ -37,13 +43,22 @@ public class BiddingDashboardController implements Initializable {
     @FXML private Label statusLabel;
     @FXML private TextArea logArea;
 
+    // Role-aware sections (fx:id from FXML)
+    @FXML private VBox placeBidSection;
+    @FXML private VBox closeBiddingSection;
+    @FXML private VBox declareWinnerSection;
+
     private BidController bidController;
     private BidService bidService;
+    private String currentRole;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         bidController = new BidController();
         bidService = new BidService();
+
+        // Get current user role from DashboardController
+        currentRole = DashboardController.getActiveUserRole();
 
         // Setup table columns
         colSessionId.setCellValueFactory(data ->
@@ -66,19 +81,59 @@ public class BiddingDashboardController implements Initializable {
         sessionTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 String id = String.valueOf(newVal.getSessionId());
-                sessionIdField.setText(id);
-                closeSessionIdField.setText(id);
-                winnerSessionIdField.setText(id);
+                if (sessionIdField != null) sessionIdField.setText(id);
+                if (closeSessionIdField != null) closeSessionIdField.setText(id);
+                if (winnerSessionIdField != null) winnerSessionIdField.setText(id);
             }
         });
 
         // Price validation
-        bidAmountField.textProperty().addListener((obs, old, val) -> {
-            if (!val.matches("\\d*(\\.\\d*)?")) bidAmountField.setText(old);
-        });
+        if (bidAmountField != null) {
+            bidAmountField.textProperty().addListener((obs, old, val) -> {
+                if (!val.matches("\\d*(\\.\\d*)?")) bidAmountField.setText(old);
+            });
+        }
+
+        // Apply role-based visibility
+        applyRoleVisibility();
 
         loadSessions();
-        addLog("[INFO] UC6-9: Bidding Dashboard loaded.");
+        addLog("[INFO] UC6-9: Bidding Dashboard loaded. Role: " + currentRole.toUpperCase());
+    }
+
+    /**
+     * Hides/shows sections based on the current user's role.
+     * Agent: only Close Session (bypasses timer, auto-declares winner)
+     * Buyer: only Place Bid
+     */
+    private void applyRoleVisibility() {
+        switch (currentRole) {
+            case "agent":
+                // Agent: show Close Session only. Hide Place Bid and Declare Winner.
+                if (placeBidSection != null) {
+                    placeBidSection.setVisible(false);
+                    placeBidSection.setManaged(false);
+                }
+                if (declareWinnerSection != null) {
+                    declareWinnerSection.setVisible(false);
+                    declareWinnerSection.setManaged(false);
+                }
+                break;
+            case "buyer":
+                // Buyer: show Place Bid only. Hide Close Session and Declare Winner.
+                if (closeBiddingSection != null) {
+                    closeBiddingSection.setVisible(false);
+                    closeBiddingSection.setManaged(false);
+                }
+                if (declareWinnerSection != null) {
+                    declareWinnerSection.setVisible(false);
+                    declareWinnerSection.setManaged(false);
+                }
+                break;
+            default:
+                // Admin/Authority or other: show all (though they shouldn't normally access this)
+                break;
+        }
     }
 
     @FXML
@@ -94,7 +149,8 @@ public class BiddingDashboardController implements Initializable {
         try {
             int sessionId = Integer.parseInt(sessionIdText);
             BigDecimal bidAmount = new BigDecimal(bidText);
-            int buyerId = 1; // Current user
+            int buyerId = DashboardController.getActiveUserId();
+            if (buyerId == 0) buyerId = 1; // Fallback
 
             String result = bidController.placeBid(sessionId, buyerId, bidAmount);
             boolean success = result.startsWith("SUCCESS");
@@ -113,7 +169,15 @@ public class BiddingDashboardController implements Initializable {
 
         try {
             int sessionId = Integer.parseInt(sessionIdText);
-            String result = bidController.closeBiddingSession(sessionId);
+            String result;
+
+            if ("agent".equals(currentRole)) {
+                // Agent: bypass timer and auto-declare winner
+                result = bidController.forceCloseBiddingSession(sessionId);
+            } else {
+                result = bidController.closeBiddingSession(sessionId);
+            }
+
             boolean success = result.startsWith("SUCCESS");
             showStatus(result, !success);
             addLog("[CLOSE] " + result);

@@ -53,21 +53,21 @@ INSERT INTO Bidding_Session (property_id, base_price, deadline, status, winner_i
     (10, 42000000.00,  '2026-06-20 18:00:00', 'Active', NULL, NULL, NULL),
     (11, 85000000.00,  '2026-05-25 18:00:00', 'Active', NULL, NULL, 90000000.00),
     (14, 75000000.00,  '2026-06-30 18:00:00', 'Active', NULL, NULL, NULL);
-
+    SELECT * FROM Bidding_Session
 -- ============================================================
 -- 4. BIDS (sample bids for active sessions)
 -- Buyer IDs: 6 (Ali), 7 (Fatima), 8 (Hassan), 9 (Ayesha), 10 (Omar)
 -- ============================================================
 INSERT INTO Bid (session_id, buyer_id, bid_amount, bid_time) VALUES
-    -- Session 1 (10 Marla Plot F-7)
-    (1, 6,  29000000.00, '2026-04-20 10:15:00'),
-    (1, 7,  29500000.00, '2026-04-20 11:30:00'),
-    (1, 8,  30000000.00, '2026-04-21 09:00:00'),
+    -- Session 5 (10 Marla Plot F-7)
+    (5, 6,  29000000.00, '2026-04-20 10:15:00'),
+    (5, 7,  29500000.00, '2026-04-20 11:30:00'),
+    (5, 8,  30000000.00, '2026-04-21 09:00:00'),
 
-    -- Session 2 (1 Kanal House F-7)
-    (2, 7,  68000000.00, '2026-04-22 10:00:00'),
-    (2, 9,  70000000.00, '2026-04-22 14:00:00'),
-    (2, 6,  72000000.00, '2026-04-23 09:30:00'),
+    -- Session 8 (1 Kanal House F-7)
+    (8, 7,  68000000.00, '2026-04-22 10:00:00'),
+    (8, 9,  70000000.00, '2026-04-22 14:00:00'),
+    (8, 6,  72000000.00, '2026-04-23 09:30:00'),
 
     -- Session 3 (Commercial Plaza F-8)
     (3, 8,  122000000.00,'2026-04-24 11:00:00'),
@@ -93,7 +93,7 @@ INSERT INTO Activity_Log (user_id, action, entity_type, entity_id, details) VALU
     (6, 'BID_PLACED',      'Bid',     1,  'Bid of 29000000 placed on session 1'),
     (7, 'BID_PLACED',      'Bid',     2,  'Bid of 29500000 placed on session 1');
 
-PRINT '✅ SEED DATA INSERTED SUCCESSFULLY!';
+PRINT ' SEED DATA INSERTED SUCCESSFULLY!';
 PRINT 'Users: 10 total (2 Admin, 1 Authority, 2 Agent, 5 Buyer)';
 PRINT 'Properties: 14 total';
 PRINT 'Bidding Sessions: 7 active';

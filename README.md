@@ -1,6 +1,6 @@
 # Islamabad Real Estate and City Management System
 
-A comprehensive web-based management system for real estate and city authority oversight in Islamabad.
+A JavaFX and SQL Server management system for real estate and city authority oversight in Islamabad.
 
 ## Features
 - **Property Listings**: Search and manage property listings with advanced filters.
@@ -9,12 +9,32 @@ A comprehensive web-based management system for real estate and city authority o
 - **Sector Management**: Authority-led capacity definition and sector freezing.
 
 ## Tech Stack
-- **Frontend**: HTML5, CSS3, JavaScript
-- **Backend**: Java Servlets
-- **Database**: MySQL
+- **UI**: JavaFX 26.0.1
+- **Language**: Java 26
+- **Database**: Microsoft SQL Server
 - **Build Tool**: Maven
 
+## Build and Run
+Use the project scripts from the project root:
+
+```powershell
+.\build.ps1
+.\run.ps1
+```
+
+The scripts use the Maven wrapper and the local JDK 26 at `C:\Users\Jibran\.jdks\openjdk-26` when `JAVA_HOME` is not already set.
+
+You can also call Maven directly if Java is configured in your terminal:
+
+```powershell
+.\mvnw.cmd clean package
+.\mvnw.cmd javafx:run
+```
+
+If you use IntelliJ IDEA, import the project as a Maven project from `pom.xml`. The JavaFX dependencies are resolved by Maven, so you do not need to manually add the JavaFX SDK jars to the module classpath.
+
 ## Folder Structure
-- `src/main/java`: Backend Java source code (DAO, Model, Service, Servlet).
-- `src/main/webapp`: Frontend assets (HTML, CSS, JS).
+- `src/main/java`: Java source code.
+- `src/main/resources/fxml`: JavaFX FXML views.
+- `src/main/resources/css`: JavaFX styles.
 - `pom.xml`: Maven configuration.

@@ -146,6 +146,42 @@ public class BidService {
                 + "Final highest bid: " + session.getCurrentHighestBid();
     }
 
+    /**
+     * UC8 (Agent): Force-close a bidding session, bypassing the timer.
+     * Used for testing purposes. After closing, automatically declares the winner.
+     */
+    public String forceCloseBiddingSession(int sessionId) {
+        BiddingSession session = sessionRepository.findById(sessionId);
+
+        if (session == null) {
+            return "ERROR: Bidding session not found.";
+        }
+
+        if (!session.isActive()) {
+            return "INFO: Bidding session is already closed.";
+        }
+
+        // Bypass timer check — close immediately regardless of deadline
+        session.closeBidding(null, session.getCurrentHighestBid());
+
+        boolean closed = sessionRepository.closeSession(
+                sessionId,
+                null,
+                session.getCurrentHighestBid()
+        );
+
+        if (!closed) {
+            return "ERROR: Could not close bidding session. Please retry.";
+        }
+
+        // Auto-declare winner after closing
+        String winnerResult = declareWinner(sessionId);
+
+        return "SUCCESS: Bidding session " + sessionId + " force-closed (timer bypassed). "
+                + "Final highest bid: " + session.getCurrentHighestBid()
+                + " | " + winnerResult;
+    }
+
     // ──────────────────────────────────────────────────────
     // UC9 – Declare Winning Bidder
     // ──────────────────────────────────────────────────────

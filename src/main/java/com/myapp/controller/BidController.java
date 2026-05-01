@@ -84,6 +84,13 @@ BigDecimal displayedBid;
         return bidService.closeBiddingSession(sessionId);
     }
 
+    /**
+     * UC8 (Agent): Force-close bypassing the timer, auto-declares winner.
+     */
+    public String forceCloseBiddingSession(int sessionId) {
+        return bidService.forceCloseBiddingSession(sessionId);
+    }
+
     // ──────────────────────────────────────────────────────
     // UC9 – Declare Winning Bidder
     // ──────────────────────────────────────────────────────

@@ -41,7 +41,7 @@
             </VBox>
 
             <!-- Place Bid Section -->
-            <VBox spacing="16" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #2ED573; -fx-border-width: 2; -fx-padding: 24;">
+            <VBox fx:id="placeBidSection" spacing="16" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #2ED573; -fx-border-width: 2; -fx-padding: 24;">
                 <Label text="💰  Place a Bid (UC6)" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
                 <Region prefHeight="3" maxWidth="80" style="-fx-background-color: #2ED573;"/>
                 <HBox spacing="20" alignment="CENTER_LEFT">
@@ -63,7 +63,7 @@
             <!-- Close & Declare Winner - Side by Side -->
             <HBox spacing="24">
                 <!-- UC8: Close Bidding -->
-                <VBox spacing="14" HBox.hgrow="ALWAYS" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #FF4757; -fx-border-width: 2; -fx-padding: 24;">
+                <VBox fx:id="closeBiddingSection" spacing="14" HBox.hgrow="ALWAYS" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #FF4757; -fx-border-width: 2; -fx-padding: 24;">
                     <Label text="🔒  Close Bidding (UC8)" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
                     <Region prefHeight="3" maxWidth="60" style="-fx-background-color: #FF4757;"/>
                     <VBox spacing="6">
@@ -74,7 +74,7 @@
                 </VBox>
 
                 <!-- UC9: Declare Winner -->
-                <VBox spacing="14" HBox.hgrow="ALWAYS" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #2ED573; -fx-border-width: 2; -fx-padding: 24;">
+                <VBox fx:id="declareWinnerSection" spacing="14" HBox.hgrow="ALWAYS" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #2ED573; -fx-border-width: 2; -fx-padding: 24;">
                     <Label text="🏆  Declare Winner (UC9)" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
                     <Region prefHeight="3" maxWidth="60" style="-fx-background-color: #2ED573;"/>
                     <VBox spacing="6">

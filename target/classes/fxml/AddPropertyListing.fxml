@@ -6,67 +6,84 @@
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.myapp.controller.AddPropertyListingController"
-      spacing="15" style="-fx-background-color: -fx-bg-dark;">
-    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+      spacing="0" style="-fx-background-color: #080808;">
 
-    <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="15">
-        <Label text="UC3: Add Property Listing" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+    <!-- Top Bar -->
+    <HBox style="-fx-background-color: #000000; -fx-border-color: #D4AF37; -fx-border-width: 0 0 3 0;"
+          spacing="20" alignment="CENTER_LEFT">
+        <padding><Insets top="14" right="30" bottom="14" left="30"/></padding>
+        <Label text="✦ Add Property" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #D4AF37;"/>
+        <Label text="UC3: List New Property for Sale" style="-fx-font-size: 14px; -fx-text-fill: #999999;"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button text="Close" styleClass="danger-btn" onAction="#handleClose"/>
+        <Button text="✕  Close" styleClass="outline-btn" onAction="#handleClose"/>
     </HBox>
-    <Separator/>
 
-    <!-- Property Form -->
-    <ScrollPane fitToWidth="true" style="-fx-background-color: -fx-bg-dark; -fx-border-color: transparent;">
-        <VBox spacing="15" style="-fx-background-color: -fx-bg-dark;">
+    <!-- Page Content -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: #080808; -fx-border-color: transparent;">
+        <VBox spacing="24" style="-fx-background-color: #080808;">
+            <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
 
-            <VBox styleClass="card-dark" spacing="12">
-                <Label text="Property Details" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -fx-gold;"/>
+            <!-- Property Details Form -->
+            <VBox spacing="20" style="-fx-background-color: #FFFFFF; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #D4AF37; -fx-border-width: 2; -fx-padding: 28; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);">
+                <Label text="Property Details" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;"/>
+                <Region prefHeight="3" maxWidth="80" style="-fx-background-color: #D4AF37;"/>
 
-                <GridPane hgap="15" vgap="12">
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="15"/>
-                        <ColumnConstraints percentWidth="35"/>
-                        <ColumnConstraints percentWidth="15"/>
-                        <ColumnConstraints percentWidth="35"/>
-                    </columnConstraints>
+                <!-- Row 1 -->
+                <HBox spacing="20">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Property Title" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="titleField" promptText="Enter property title" styleClass="text-field" prefHeight="40"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Location" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="locationField" promptText="e.g., F-7, Islamabad" styleClass="text-field" prefHeight="40"/>
+                    </VBox>
+                </HBox>
 
-                    <Label text="Title:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label-gold"/>
-                    <TextField fx:id="titleField" promptText="Property title" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
+                <!-- Row 2 -->
+                <HBox spacing="20">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Price (PKR)" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="priceField" promptText="Enter price in PKR" styleClass="text-field" prefHeight="40"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Property Type" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <ComboBox fx:id="typeCombo" styleClass="combo-box" maxWidth="Infinity" prefHeight="40"/>
+                    </VBox>
+                </HBox>
 
-                    <Label text="Location:" GridPane.rowIndex="0" GridPane.columnIndex="2" styleClass="label-gold"/>
-                    <TextField fx:id="locationField" promptText="e.g., F-7, Islamabad" GridPane.rowIndex="0" GridPane.columnIndex="3" styleClass="text-field"/>
+                <!-- Row 3 -->
+                <HBox spacing="20">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Selling Method" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <ComboBox fx:id="sellingMethodCombo" styleClass="combo-box" maxWidth="Infinity" prefHeight="40"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Sector" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <ComboBox fx:id="sectorCombo" styleClass="combo-box" maxWidth="Infinity" prefHeight="40"/>
+                    </VBox>
+                </HBox>
 
-                    <Label text="Price (PKR):" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="label-gold"/>
-                    <TextField fx:id="priceField" promptText="Enter price" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="text-field"/>
-
-                    <Label text="Property Type:" GridPane.rowIndex="1" GridPane.columnIndex="2" styleClass="label-gold"/>
-                    <ComboBox fx:id="typeCombo" GridPane.rowIndex="1" GridPane.columnIndex="3" styleClass="combo-box" maxWidth="Infinity"/>
-
-                    <Label text="Selling Method:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label-gold"/>
-                    <ComboBox fx:id="sellingMethodCombo" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="combo-box" maxWidth="Infinity"/>
-
-                    <Label text="Sector:" GridPane.rowIndex="2" GridPane.columnIndex="2" styleClass="label-gold"/>
-                    <ComboBox fx:id="sectorCombo" GridPane.rowIndex="2" GridPane.columnIndex="3" styleClass="combo-box" maxWidth="Infinity"/>
-                </GridPane>
-
-                <Label text="Description:" styleClass="label-gold"/>
-                <TextArea fx:id="descriptionArea" promptText="Enter property description..." prefHeight="80" styleClass="text-area"/>
+                <!-- Description -->
+                <VBox spacing="6">
+                    <Label text="Description" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                    <TextArea fx:id="descriptionArea" promptText="Enter detailed property description..." prefHeight="100" styleClass="text-area"/>
+                </VBox>
             </VBox>
 
             <!-- Action Buttons -->
-            <HBox spacing="15" alignment="CENTER">
-                <Button text="Submit Listing" styleClass="primary-btn" onAction="#handleSubmit" prefWidth="200">
-                    <padding><Insets top="12" bottom="12"/></padding>
-                </Button>
-                <Button text="Clear Form" styleClass="secondary-btn" onAction="#handleClear"/>
-                <Button text="Validate" styleClass="outline-btn" onAction="#handleValidate"/>
+            <HBox spacing="18" alignment="CENTER">
+                <Button text="⚡  Submit Listing" styleClass="primary-btn" onAction="#handleSubmit" prefWidth="220" prefHeight="46"/>
+                <Button text="Clear Form" styleClass="secondary-btn" onAction="#handleClear" prefHeight="46"/>
+                <Button text="✓  Validate" styleClass="outline-btn" onAction="#handleValidate" prefHeight="46"/>
             </HBox>
 
-            <!-- Status -->
-            <Label fx:id="statusLabel" style="-fx-text-fill: -fx-text-muted; -fx-font-size: 13px;"/>
-            <TextArea fx:id="logArea" editable="false" prefHeight="100" styleClass="message-area" promptText="Activity log..."/>
+            <!-- Activity Log -->
+            <VBox spacing="10" style="-fx-background-color: #111111; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #333333; -fx-border-width: 1; -fx-padding: 20;">
+                <Label fx:id="statusLabel" style="-fx-text-fill: #D4AF37; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <TextArea fx:id="logArea" editable="false" prefHeight="80" styleClass="message-area" promptText="Activity log..."/>
+            </VBox>
+
         </VBox>
     </ScrollPane>
 </VBox>

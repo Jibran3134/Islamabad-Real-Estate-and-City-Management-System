@@ -59,6 +59,20 @@ public class User {
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
+    /**
+     * Maps roleId to a human-readable role name for display.
+     * Role mapping: 1=Authority, 2=Agent, 3=Buyer, 4=Admin
+     */
+    public String getRoleName() {
+        switch (roleId) {
+            case 1: return "Authority";
+            case 2: return "Agent";
+            case 3: return "Buyer";
+            case 4: return "Admin";
+            default: return "Unknown";
+        }
+    }
+
     @Override
     public String toString() {
         return "User{" +

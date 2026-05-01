@@ -25,7 +25,7 @@ public class UserManagementController implements Initializable {
     @FXML private TableColumn<User, String> colName;
     @FXML private TableColumn<User, String> colEmail;
     @FXML private TableColumn<User, String> colPhone;
-    @FXML private TableColumn<User, Integer> colRole;
+    @FXML private TableColumn<User, String> colRole;
     @FXML private TableColumn<User, String> colUserStatus;
     @FXML private TextField targetUserIdField;
     @FXML private ComboBox<String> statusCombo;
@@ -43,7 +43,7 @@ public class UserManagementController implements Initializable {
         colName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colPhone.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-        colRole.setCellValueFactory(new PropertyValueFactory<>("roleId"));
+        colRole.setCellValueFactory(new PropertyValueFactory<>("roleName"));
         colUserStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         // Status combo
@@ -83,7 +83,7 @@ public class UserManagementController implements Initializable {
             addLog("[UPDATE] " + result);
             if (success) loadUsers();
         } catch (NumberFormatException e) {
-            showStatus("Invalid User ID.", true);
+            showStatus("Invalid User ID. Please enter a valid number.", true);
         }
     }
 
