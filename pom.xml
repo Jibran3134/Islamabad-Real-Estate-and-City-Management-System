@@ -7,10 +7,9 @@
     <groupId>com.irms</groupId>
     <artifactId>Islamabad-Real-Estate-and-City-Management-System</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>${project.packaging.type}</packaging>
+    <packaging>jar</packaging>
 
     <properties>
-        <project.packaging.type>jar</project.packaging.type>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>26.0.1</javafx.version>
@@ -44,14 +43,6 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
-        </dependency>
-
-        <!-- Servlet API for Tomcat deployment -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -88,14 +79,6 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
             <!-- JavaFX Maven Plugin for running the app -->
             <plugin>
                 <groupId>org.openjfx</groupId>
@@ -111,12 +94,4 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>tomcat</id>
-            <properties>
-                <project.packaging.type>war</project.packaging.type>
-            </properties>
-        </profile>
-    </profiles>
 </project>

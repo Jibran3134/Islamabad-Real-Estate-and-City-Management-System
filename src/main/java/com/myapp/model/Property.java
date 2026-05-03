@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
  */
 public class Property {
 
+    // OOP ENCAPSULATION: fields are private and exposed through getters/setters.
+    // This protects property state from uncontrolled direct modification.
     private int propertyId;
     private int sectorId;              // FK → Sector.sector_id
     private int agentId;               // FK → Users.user_id (agent role)
@@ -84,6 +86,7 @@ public class Property {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
+    // NFR - Performance/Usability: search ranking metadata helps users see best matches first.
     // ── UC4: Ranking Fields (NON-CRUD) ───────────────────────────────
     
     private int relevanceScore;     // How many filters matched × 10

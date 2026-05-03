@@ -13,6 +13,7 @@ public class PropertyTypeStrategy implements SearchStrategy {
     
     @Override
     public List<Property> filter(List<Property> properties, SearchCriteria criteria) {
+        // OOP POLYMORPHISM: same SearchStrategy contract, property-type-specific logic.
         String propertyType = criteria.getPropertyType();
         
         if (propertyType == null || propertyType.trim().isEmpty()) {

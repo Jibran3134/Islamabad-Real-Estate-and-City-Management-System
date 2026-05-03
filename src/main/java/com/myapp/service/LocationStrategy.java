@@ -13,6 +13,7 @@ public class LocationStrategy implements SearchStrategy {
     
     @Override
     public List<Property> filter(List<Property> properties, SearchCriteria criteria) {
+        // OOP POLYMORPHISM: this concrete strategy provides location-specific filter behavior.
         String location = criteria.getLocation();
         
         if (location == null || location.trim().isEmpty()) {

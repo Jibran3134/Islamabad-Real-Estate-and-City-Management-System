@@ -424,6 +424,7 @@ public class SectorService {
      */
     public UpdateResult updateSectorCapacity(int sectorId, int newCapacity, int authorityId) throws SQLException {
         
+        // NFR - Robustness: validate inputs and preserve old capacity for recovery messages.
         // STEP 1: Verify sector exists (INFORMATION EXPERT delegates to repository)
         Sector sector = sectorRepository.findSectorById(sectorId);
         if (sector == null) {
@@ -450,6 +451,7 @@ public class SectorService {
                 // This matches SD4: SectorRepository → Sector.setCapacityLimit()
                 sector.setCapacityLimit(newCapacity);
                 
+                // NFR - Auditability: log the capacity change for accountability.
                 // STEP 5: Log the update (PURE FABRICATION)
                 String logMessage = "CAPACITY_UPDATED from " + oldCapacity + " to " + newCapacity;
                 auditLogRepository.logUpdate(sectorId, authorityId, logMessage);
@@ -514,6 +516,7 @@ public class SectorService {
                 "). Use override to freeze anyway.", true);
         }
         
+        // NFR - Security/Access Control: only allowed authority/admin users can freeze sectors.
         // STEP 3: Validate authority permissions (SD3 - Pure Fabrication + Singleton)
         PermissionResult permission = permissionValidator.checkPermission(authorityId, "FREEZE_SECTOR");
         if (!permission.isGranted()) {
@@ -530,6 +533,7 @@ public class SectorService {
                 // SD4 FIX: Update Java object too (same fix as UC1)
                 sector.freeze();
                 
+                // NFR - Auditability: record the regulatory freeze action.
                 // STEP 5: Log the regulatory action (PURE FABRICATION)
                 String logMessage = "SECTOR_FROZEN - Sector '" + sector.getSectorName() + 
                     "' status changed to FROZEN. Property listings blocked.";
@@ -606,6 +610,7 @@ public class SectorService {
     /**
      * UC1 Result wrapper class
      * HIGH COHESION - Groups success status with message and data
+     * OOP ENCAPSULATION: callers receive a clear result object instead of multiple loose values.
      */
     public static class UpdateResult {
         private final boolean success;
@@ -626,6 +631,7 @@ public class SectorService {
     /**
      * UC2 Result wrapper class
      * HIGH COHESION - Groups freeze result with override flag
+     * OOP ENCAPSULATION: success, message, and override warning are kept together.
      */
     public static class FreezeResult {
         private final boolean success;

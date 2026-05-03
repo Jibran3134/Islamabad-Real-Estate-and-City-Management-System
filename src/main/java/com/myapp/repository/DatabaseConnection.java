@@ -10,6 +10,8 @@ import java.util.Properties;
 
 public class DatabaseConnection {
     
+    // OOP ENCAPSULATION: connection configuration and URL construction are hidden inside this class.
+    // Other classes ask for a Connection without knowing driver/authentication details.
     private static DatabaseConnection instance;
 
     private static final Properties CONFIG = loadConfig();
@@ -80,6 +82,8 @@ public class DatabaseConnection {
     }
 
     private static String buildUrl() {
+        // NFR - Security/Configurability: encryption, certificate trust, auth mode,
+        // server, port, and database are driven by application.properties.
         StringBuilder url = new StringBuilder("jdbc:sqlserver://")
             .append(SERVER)
             .append(":")
@@ -100,6 +104,8 @@ public class DatabaseConnection {
     }
 
     private static void loadWindowsAuthLibrary() {
+        // NFR - Portability/Reliability: supports Windows authentication from a configured,
+        // project-root, or packaged SQL Server auth DLL location.
         if (!"windows".equalsIgnoreCase(AUTH_MODE)) {
             return;
         }

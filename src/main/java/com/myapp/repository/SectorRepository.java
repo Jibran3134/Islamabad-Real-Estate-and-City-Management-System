@@ -67,6 +67,7 @@ public class SectorRepository {
         Connection conn = null;
         try {
             conn = dbConnection.getConnection();
+            // NFR - Data Integrity: capacity and derived status update must stay consistent.
             conn.setAutoCommit(false);
             
             // Step 1: Update capacity limit
@@ -118,6 +119,7 @@ public class SectorRepository {
         Connection conn = null;
         try {
             conn = dbConnection.getConnection();
+            // NFR - Data Integrity/Reliability: freeze status and listing blocks are atomic.
             conn.setAutoCommit(false);
             
             // Step 1: Update sector status to FROZEN

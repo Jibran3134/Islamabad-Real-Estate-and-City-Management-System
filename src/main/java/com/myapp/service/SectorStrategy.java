@@ -13,6 +13,7 @@ public class SectorStrategy implements SearchStrategy {
     
     @Override
     public List<Property> filter(List<Property> properties, SearchCriteria criteria) {
+        // OOP POLYMORPHISM: same SearchStrategy contract, sector-specific filtering.
         Integer sectorId = criteria.getSectorId();
         
         if (sectorId == null) {

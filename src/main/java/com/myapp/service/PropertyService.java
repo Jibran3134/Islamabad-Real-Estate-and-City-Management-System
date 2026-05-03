@@ -101,7 +101,7 @@ public class PropertyService {
             // UC3 Alternative Scenario: Sector is frozen (links to UC2)
             return new AddPropertyResult(false, "Cannot add listing: Sector is FROZEN. Contact Authority.", 0);
         }
-        
+
         // Step 3: Upload images (SD3 - Adapter Pattern)
         List<String> storedImagePaths = storageAdapter.storeImages(imageFiles, originalFileNames);
         if (imageFiles != null && !imageFiles.isEmpty() && storedImagePaths.isEmpty()) {

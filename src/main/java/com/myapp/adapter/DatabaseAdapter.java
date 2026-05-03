@@ -8,14 +8,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * GoF DESIGN PATTERN: ADAPTER
- * GRASP: PURE FABRICATION
- * 
- * SD2 - DatabaseAdapter adapts raw SQL/ResultSet operations into
- * clean Java method calls for PropertySearchService.
- * 
- * Uses correct table: Property (capital P) from main schema
+
+ /** GoF DESIGN PATTERN: ADAPTER
+ / GRASP: PURE FABRICATION
+ SD2 - DatabaseAdapter adapts raw SQL/ResultSet operations into clean Java method calls
  */
 public class DatabaseAdapter {
     

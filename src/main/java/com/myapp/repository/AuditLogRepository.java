@@ -14,6 +14,9 @@ public class AuditLogRepository {
      * Log an action to the audit_logs table.
      * Uses try-catch to never block the main operation if logging fails.
      * Falls back to Activity_Log table if audit_logs has FK issues.
+     *
+     * NFR - Auditability/Reliability: important actions are recorded, but audit
+     * failure does not break the main business transaction.
      */
     public boolean logUpdate(int sectorId, int userId, String action) throws SQLException {
         // First try audit_logs table

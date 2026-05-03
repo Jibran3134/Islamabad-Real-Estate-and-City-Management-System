@@ -16,6 +16,9 @@ import java.sql.SQLException;
  * Main JavaFX Application Launcher
  * Pure JavaFX - No HTML/CSS/JS framework
  * Theme: Black + White + Gold
+ *
+ * OOP INHERITANCE: This class extends JavaFX Application and overrides start().
+ * The JavaFX framework calls the overridden lifecycle method at runtime.
  */
 public class JavaFXLauncher extends Application {
 
@@ -25,7 +28,7 @@ public class JavaFXLauncher extends Application {
     public void start(Stage stage) {
         primaryStage = stage;
 
-        // Test database connection
+        // NFR - Availability/Reliability: fail fast with a clear error if the database is unreachable.
         if (!DatabaseConnection.getInstance().testConnection()) {
             showErrorAndExit("Cannot connect to database.\nCheck SQL Server is running.");
             return;

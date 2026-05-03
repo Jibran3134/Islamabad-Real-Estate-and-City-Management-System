@@ -290,6 +290,8 @@ public class PropertyRepository {
         Connection conn = null;
         try {
             conn = dbConnection.getConnection();
+            // NFR - Data Integrity/Reliability: property insert, images, and sector count
+            // are committed as one atomic transaction or rolled back together.
             conn.setAutoCommit(false);  // Begin transaction
             
             // Step 1: Insert property record (using existing Property table columns)

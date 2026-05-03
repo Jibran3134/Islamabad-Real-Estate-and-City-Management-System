@@ -48,6 +48,8 @@ public class PropertySearchService {
      * and perfectly matching properties appear at the top.
      */
     public SearchResult searchProperties(SearchCriteria criteria) {
+        // NFR - Performance: measure search execution time so the UI/console can
+        // report whether the search meets the 3-second response requirement.
         long startTime = System.currentTimeMillis();
         
         try {
@@ -84,6 +86,9 @@ public class PropertySearchService {
     
     /**
      * SearchResult wrapper class with ranking info
+     *
+     * OOP ENCAPSULATION: bundles success flag, data, user message, timing,
+     * and ranking explanation into one well-defined return object.
      */
     public static class SearchResult {
         private final boolean success;

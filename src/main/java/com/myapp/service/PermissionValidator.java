@@ -42,6 +42,7 @@ public class PermissionValidator {
      * @return PermissionResult with granted status and message
      */
     public PermissionResult checkPermission(int authorityId, String action) {
+        // NFR - Security/Access Control: centralizes authorization before sensitive actions.
         // SD3 step 3.1: lookupRole(authorityId)
         String userRole = getUserRole(authorityId);
         
@@ -99,6 +100,9 @@ public class PermissionValidator {
     /**
      * Result wrapper class - High Cohesion
      * Bundles permission status with message
+     *
+     * OOP ENCAPSULATION: permission outcome is returned as one object instead of
+     * exposing separate loose variables.
      */
     public static class PermissionResult {
         private final boolean granted;

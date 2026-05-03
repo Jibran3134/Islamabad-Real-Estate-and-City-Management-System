@@ -14,6 +14,7 @@ public class PriceRangeStrategy implements SearchStrategy {
     
     @Override
     public List<Property> filter(List<Property> properties, SearchCriteria criteria) {
+        // OOP POLYMORPHISM: same SearchStrategy method, different price-range behavior.
         BigDecimal minPrice = criteria.getMinPrice();
         BigDecimal maxPrice = criteria.getMaxPrice();
         
