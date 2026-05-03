@@ -22,13 +22,26 @@ Use the project scripts from the project root:
 .\run.ps1
 ```
 
-The scripts use the Maven wrapper and the local JDK 26 at `C:\Users\Jibran\.jdks\openjdk-26` when `JAVA_HOME` is not already set.
+The scripts use the Maven wrapper. Make sure Java 26 is available through `JAVA_HOME` or on your `PATH`.
 
 You can also call Maven directly if Java is configured in your terminal:
 
 ```powershell
 .\mvnw.cmd clean package
 .\mvnw.cmd javafx:run
+```
+
+## Tomcat Output
+To build a Tomcat-compatible WAR that shows database connectivity output:
+
+```powershell
+.\mvnw.cmd -Ptomcat clean package
+```
+
+Deploy `target\Islamabad-Real-Estate-and-City-Management-System-1.0-SNAPSHOT.war` to Tomcat and open:
+
+```text
+http://localhost:8080/Islamabad-Real-Estate-and-City-Management-System-1.0-SNAPSHOT/
 ```
 
 If you use IntelliJ IDEA, import the project as a Maven project from `pom.xml`. The JavaFX dependencies are resolved by Maven, so you do not need to manually add the JavaFX SDK jars to the module classpath.

@@ -70,10 +70,15 @@ public class AddPropertyListingController implements Initializable {
 
     private void loadSectors() {
         try {
-            sectors = sectorController.getAllSectors();
+            List<Sector> allSectors = sectorController.getAllSectors();
+            sectors = new ArrayList<>();
             sectorCombo.getItems().clear();
-            for (Sector s : sectors) {
-                sectorCombo.getItems().add(s.getSectorName() + " (ID: " + s.getSectorId() + ")");
+            for (Sector s : allSectors) {
+                String name = s.getSectorName().toUpperCase();
+                if (!name.contains("DHA") && !name.contains("BAHRIA") && !name.contains("TOWN") && !name.contains("ENCLAVE")) {
+                    sectors.add(s);
+                    sectorCombo.getItems().add(s.getSectorName() + " (ID: " + s.getSectorId() + ")");
+                }
             }
             if (!sectorCombo.getItems().isEmpty()) {
                 sectorCombo.getSelectionModel().selectFirst();
@@ -87,10 +92,19 @@ public class AddPropertyListingController implements Initializable {
     private void handleValidate() {
         try {
             String title = titleField.getText().trim();
-            String loc = locationField.getText().trim();
+            String baseLoc = locationField.getText().trim();
             BigDecimal price = priceField.getText().isEmpty() ? null : new BigDecimal(priceField.getText().trim());
             String type = typeCombo.getValue();
             int sectorId = getSelectedSectorId();
+            
+            int sectorIndex = sectorCombo.getSelectionModel().getSelectedIndex();
+            String sectorName = (sectorIndex >= 0 && sectors != null && sectorIndex < sectors.size()) ? sectors.get(sectorIndex).getSectorName() : "";
+            String loc = baseLoc;
+            if (!sectorName.isEmpty() && !baseLoc.isEmpty()) {
+                loc = baseLoc + ", " + sectorName + ", Islamabad";
+            } else if (baseLoc.isEmpty()) {
+                loc = "";
+            }
 
             ValidationResult result = propertyController.validatePropertyData(title, loc, price, type, sectorId);
 
@@ -111,11 +125,18 @@ public class AddPropertyListingController implements Initializable {
         try {
             String title = titleField.getText().trim();
             String description = descriptionArea.getText().trim();
-            String loc = locationField.getText().trim();
+            String baseLoc = locationField.getText().trim();
             String priceText = priceField.getText().trim();
             String type = typeCombo.getValue();
             String sellingMethod = sellingMethodCombo.getValue();
             int sectorId = getSelectedSectorId();
+            
+            int sectorIndex = sectorCombo.getSelectionModel().getSelectedIndex();
+            String sectorName = (sectorIndex >= 0 && sectors != null && sectorIndex < sectors.size()) ? sectors.get(sectorIndex).getSectorName() : "";
+            String loc = baseLoc;
+            if (!sectorName.isEmpty()) {
+                loc = baseLoc + ", " + sectorName + ", Islamabad";
+            }
 
             if (priceText.isEmpty()) {
                 showStatus("Please enter a price.", true);

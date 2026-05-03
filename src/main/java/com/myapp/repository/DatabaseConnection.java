@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.*;
 import java.util.Properties;
 
@@ -103,9 +104,30 @@ public class DatabaseConnection {
             return;
         }
 
+        String configuredDll = System.getProperty("mssql.auth.dll");
+        if (configuredDll != null && !configuredDll.isBlank()) {
+            Path authDll = Path.of(configuredDll).toAbsolutePath();
+            if (Files.exists(authDll)) {
+                System.load(authDll.toString());
+                return;
+            }
+        }
+
         Path authDll = Path.of("mssql-jdbc_auth-12.6.4.x64.dll").toAbsolutePath();
         if (Files.exists(authDll)) {
             System.load(authDll.toString());
+            return;
+        }
+
+        try (InputStream input = DatabaseConnection.class.getResourceAsStream("/mssql-jdbc_auth-12.6.4.x64.dll")) {
+            if (input != null) {
+                Path tempDll = Files.createTempFile("mssql-jdbc_auth-", ".dll");
+                tempDll.toFile().deleteOnExit();
+                Files.copy(input, tempDll, StandardCopyOption.REPLACE_EXISTING);
+                System.load(tempDll.toAbsolutePath().toString());
+            }
+        } catch (IOException e) {
+            System.err.println("[WARN] Could not load SQL Server Windows auth DLL: " + e.getMessage());
         }
     }
 }

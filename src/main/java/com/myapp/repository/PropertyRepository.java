@@ -215,7 +215,7 @@ public class PropertyRepository {
      * Returns int[]{count, totalValueRounded} for use by FreezeImpact analyzer.
      * Does NOT modify data — read-only aggregate query.
      */
-    public int[] countAndValueActiveListingsBySector(int sectorId) throws SQLException {
+    public double[] countAndValueActiveListingsBySector(int sectorId) throws SQLException {
         String sql = "SELECT COUNT(*) AS cnt, COALESCE(SUM(price), 0) AS total_val " +
                      "FROM Property WHERE sector_id = ? AND listing_status = 'For Sale'";
         try (Connection conn = dbConnection.getConnection();
@@ -223,14 +223,14 @@ public class PropertyRepository {
             stmt.setInt(1, sectorId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                int count = rs.getInt("cnt");
-                int totalVal = (int) rs.getDouble("total_val");
-                return new int[]{count, totalVal};
+                double count = rs.getDouble("cnt");
+                double totalVal = rs.getDouble("total_val");
+                return new double[]{count, totalVal};
             }
         } catch (SQLException e) {
             System.err.println("Error counting listings for sector " + sectorId + ": " + e.getMessage());
         }
-        return new int[]{0, 0};
+        return new double[]{0, 0};
     }
 
     /**

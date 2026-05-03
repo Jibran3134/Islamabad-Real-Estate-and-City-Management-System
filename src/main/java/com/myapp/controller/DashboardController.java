@@ -74,6 +74,7 @@ public class DashboardController implements Initializable {
                 addMenuButton("User Management", "Manage all user accounts (UC11)", "/fxml/UserManagement.fxml");
                 addMenuButton("Sector Management", "Define capacity limits (UC1)", "/fxml/SectorManagement.fxml");
                 addMenuButton("Sector Dashboard", "Freeze overloaded sectors (UC2)", "/fxml/SectorDashboard.fxml");
+                addMenuButton("Add Property Listing", "List a new property for sale (UC3)", "/fxml/AddPropertyListing.fxml");
                 break;
             case "agent":
                 addMenuButton("Bidding Dashboard", "Manage bidding sessions (UC6-9)", "/fxml/BiddingDashboard.fxml");

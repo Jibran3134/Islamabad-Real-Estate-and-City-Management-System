@@ -35,8 +35,8 @@
                         <TextField fx:id="titleField" promptText="Enter property title" styleClass="text-field" prefHeight="40"/>
                     </VBox>
                     <VBox spacing="6" HBox.hgrow="ALWAYS">
-                        <Label text="Location" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
-                        <TextField fx:id="locationField" promptText="e.g., F-7, Islamabad" styleClass="text-field" prefHeight="40"/>
+                        <Label text="Address" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextField fx:id="locationField" promptText="e.g., Street 10, House 24" styleClass="text-field" prefHeight="40"/>
                     </VBox>
                 </HBox>
 

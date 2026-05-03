@@ -41,6 +41,7 @@ public class SectorDashboardController implements Initializable {
     @FXML private Label    impactSeverityLabel;
     @FXML private Label    impactSummaryLabel;
     @FXML private TextArea impactTextArea;
+    @FXML private javafx.scene.chart.PieChart impactPieChart;
 
     private SectorController sectorController;
     private SectorService    sectorService;
@@ -102,12 +103,39 @@ public class SectorDashboardController implements Initializable {
     private void runImpactAnalysis(int sectorId) {
         try {
             FreezeImpact impact = sectorService.analyzeFreezeImpact(sectorId);
+            
+            // Get current stats to calculate wasted space without changing backend
+            SectorStatistics currentStat = statsTable.getItems().stream()
+                    .filter(s -> s.getSectorId() == sectorId).findFirst().orElse(null);
+
             Platform.runLater(() -> {
+                String finalSeverity = impact.getSeverity();
+                String extraMessage = "";
+                int used = 0;
+                int free = 0;
+
+                if (currentStat != null) {
+                    used = currentStat.getPropertyCount();
+                    int limit = currentStat.getCapacityLimit();
+                    free = Math.max(0, limit - used);
+                    
+                    double freePct = limit > 0 ? (free * 100.0) / limit : 0;
+                    
+                    // UI-side business logic: huge waste of space = high impact
+                    if (freePct >= 50.0) {
+                        finalSeverity = "🔴 SEVERE (Wasted Space)";
+                        extraMessage = "\n\n❌ CRITICAL: Freezing this sector wastes " + String.format("%.1f%%", freePct) + " of its capacity!\n   A massive amount of empty area will be lost.";
+                    } else if (freePct >= 30.0) {
+                        if (!finalSeverity.contains("SEVERE")) finalSeverity = "🟠 HIGH (Wasted Space)";
+                        extraMessage = "\n\n⚠️ HIGH: Freezing this sector wastes " + String.format("%.1f%%", freePct) + " of its capacity.";
+                    }
+                }
+
                 if (impactSeverityLabel != null) {
-                    impactSeverityLabel.setText("Impact: " + impact.getSeverity());
-                    String color = impact.getSeverity().contains("SEVERE") ? "#FF4757"
-                                 : impact.getSeverity().contains("HIGH")   ? "#FF6B35"
-                                 : impact.getSeverity().contains("MEDIUM") ? "#FFA502"
+                    impactSeverityLabel.setText("Impact: " + finalSeverity);
+                    String color = finalSeverity.contains("SEVERE") ? "#FF4757"
+                                 : finalSeverity.contains("HIGH")   ? "#FF6B35"
+                                 : finalSeverity.contains("MEDIUM") ? "#FFA502"
                                  : "#2ED573";
                     impactSeverityLabel.setStyle("-fx-text-fill: " + color + "; -fx-font-weight: bold; -fx-font-size: 14px;");
                 }
@@ -119,11 +147,32 @@ public class SectorDashboardController implements Initializable {
                     impactSummaryLabel.setStyle("-fx-text-fill: #CCCCCC; -fx-font-size: 13px;");
                 }
                 if (impactTextArea != null) {
-                    impactTextArea.setText(impact.getReportText());
+                    String cleanReport = impact.getReportText()
+                        .replaceAll("(?m)^🚫 Listings to be BLOCKED:.*\\n?", "")
+                        .replaceAll("(?m)^🔨 Active Auctions Affected:.*\\n?", "")
+                        .replaceAll("(?m)^📈 Impact Severity:.*\\n?", "")
+                        .replaceAll("(?m)^\\s*⚠️  Some listings will be affected\\. Proceed with caution\\..*\\n?", "");
+                    impactTextArea.setText(cleanReport.trim() + extraMessage);
                 }
-                addLog("[IMPACT] " + impact.getSectorName()
-                    + " → " + impact.getBlockedListings() + " listings, "
-                    + impact.getAffectedBidSessions() + " auctions, Severity=" + impact.getSeverity());
+                
+                // Update PieChart
+                if (impactPieChart != null) {
+                    impactPieChart.getData().clear();
+                    javafx.scene.chart.PieChart.Data usedSlice = new javafx.scene.chart.PieChart.Data("Used", used);
+                    javafx.scene.chart.PieChart.Data freeSlice = new javafx.scene.chart.PieChart.Data("Wasted (Frozen)", free);
+                    impactPieChart.getData().addAll(usedSlice, freeSlice);
+                    
+                    // Apply styles after layout
+                    Platform.runLater(() -> {
+                        if (usedSlice.getNode() != null) usedSlice.getNode().setStyle("-fx-pie-color: #D4AF37;"); // Gold
+                        if (freeSlice.getNode() != null) freeSlice.getNode().setStyle("-fx-pie-color: #FF4757;"); // Red
+                        
+                        impactPieChart.lookupAll(".default-color0.chart-pie-legend-symbol").forEach(n -> n.setStyle("-fx-background-color: #D4AF37;"));
+                        impactPieChart.lookupAll(".default-color1.chart-pie-legend-symbol").forEach(n -> n.setStyle("-fx-background-color: #FF4757;"));
+                    });
+                }
+
+                addLog("[IMPACT] Sector ID " + sectorId + " → Severity=" + finalSeverity);
             });
         } catch (SQLException e) {
             addLog("[IMPACT ERROR] " + e.getMessage());

@@ -32,7 +32,7 @@
                 <HBox spacing="20">
                     <VBox spacing="6" HBox.hgrow="ALWAYS">
                         <Label text="Location" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
-                        <TextField fx:id="locationField" promptText="e.g., F-7, G-10" styleClass="text-field" prefHeight="40"/>
+                        <TextField fx:id="locationField" promptText="Street, City, etc." styleClass="text-field" prefHeight="40"/>
                     </VBox>
                     <VBox spacing="6" HBox.hgrow="ALWAYS">
                         <Label text="Sector" style="-fx-text-fill: #1A1A1A; -fx-font-weight: bold; -fx-font-size: 13px;"/>
@@ -60,7 +60,7 @@
                 <HBox spacing="16" alignment="CENTER_LEFT">
                     <Button text="🔍  SEARCH" styleClass="primary-btn" onAction="#handleSearch" prefHeight="42" prefWidth="150"/>
                     <Button text="Clear Filters" styleClass="secondary-btn" onAction="#handleClearFilters" prefHeight="42"/>
-                    <Button text="Show All" styleClass="outline-btn" onAction="#handleReset" prefHeight="42"/>
+                    <Button text="Refresh" styleClass="outline-btn" onAction="#handleReset" prefHeight="42"/>
                 </HBox>
             </VBox>
 

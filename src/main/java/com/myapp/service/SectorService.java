@@ -85,69 +85,132 @@ public class SectorService {
             return new CapacityAdvisory(false, "Sector not found.", 0, 0, 0, "UNKNOWN", "");
         }
 
-        int currentCount  = sector.getCurrentPropertyCount();
-        int currentLimit  = sector.getCapacityLimit();
+        int currentCount = sector.getCurrentPropertyCount();
+        int currentLimit = sector.getCapacityLimit();
 
-        // ── Step 1: Current usage % ──────────────────────────
+        // ── Step 1: Current usage % ────────────────────────────────────────────
         double currentUsagePct = currentLimit > 0
                 ? (currentCount * 100.0) / currentLimit : 0;
 
-        // ── Step 2: Proposed usage % after change ────────────
+        // ── Step 2: Proposed usage % after change ─────────────────────────────
+        // "If we set the limit to proposedCapacity, what % full will this sector be?"
         double proposedUsagePct = proposedCapacity > 0
-                ? (currentCount * 100.0) / proposedCapacity : 100;
+                ? (currentCount * 100.0) / proposedCapacity : 100.0;
 
-        // ── Step 3: Risk Score (0=Safe, 100=Critical) ────────
-        // Formula: weighted combo of usage%, proximity to overload,
-        // and direction of change (decrease = more risky)
+        // ── Step 3: Risk Score (real-estate-aware thresholds) ─────────────────
+        //
+        // Example: sector has limit=150, count=100 (currently 66.7% full)
+        //
+        //  Proposed → 120  : proposed usage = 100/120 = 83.3%  → base=85 (≥80%)
+        //                    + reducing penalty (+25)            → 100  → 🔴 CRITICAL
+        //
+        //  Proposed → 130  : proposed usage = 100/130 = 76.9%  → base=65 (≥70%)
+        //                    + reducing penalty (+25)            → 90   → 🔴 CRITICAL
+        //
+        //  Proposed → 150  : proposed usage = 100/150 = 66.7%  → base=50 (≥60%)
+        //                    same capacity, no penalty           → 50   → 🟠 HIGH
+        //
+        //  Proposed → 175  : proposed usage = 100/175 = 57.1%  → base=30 (≥45%)
+        //                    increasing, no penalty              → 30   → 🟡 MEDIUM
+        //
+        //  Proposed → 250  : proposed usage = 100/250 = 40.0%  → base=10 (<45%)
+        //                    large increase, no penalty          → 10   → 🟢 SAFE
+        //
+        // Thresholds (tighter than generic — reflects real estate scarcity):
+        //   ≥ 80% proposed full  →  base 85  (only 20% slots left — near overload)
+        //   ≥ 70% proposed full  →  base 65  (only 30% slots left — very tight)
+        //   ≥ 60% proposed full  →  base 50  (still workable but watch out)
+        //   ≥ 45% proposed full  →  base 30  (healthy buffer)
+        //   <  45% proposed full →  base 10  (very comfortable)
+
         int riskScore;
         if (proposedCapacity < currentCount) {
-            riskScore = 100; // Immediate overload — critical
-        } else if (proposedUsagePct >= 90) {
+            riskScore = 100; // Sector is ALREADY overloaded by this limit
+        } else if (proposedUsagePct >= 80) {
             riskScore = 85;
-        } else if (proposedUsagePct >= 75) {
-            riskScore = 60;
-        } else if (proposedUsagePct >= 50) {
-            riskScore = 35;
+        } else if (proposedUsagePct >= 70) {
+            riskScore = 65;
+        } else if (proposedUsagePct >= 60) {
+            riskScore = 50;
+        } else if (proposedUsagePct >= 45) {
+            riskScore = 30;
         } else {
-            riskScore = 15;
+            riskScore = 10;
         }
 
-        // If reducing capacity, add 20 penalty points
+        // Reduction penalty: lowering the limit shrinks the safety buffer.
+        // +25 points if reducing capacity (on top of base score).
+        // This ensures: limit=150→120 with count=100 → 83.3% + penalty → CRITICAL.
         if (proposedCapacity < currentLimit) {
-            riskScore = Math.min(100, riskScore + 20);
+            riskScore = Math.min(100, riskScore + 25);
         }
 
-        // ── Step 4: Risk Level Label ──────────────────────────
+        // ── Step 4: Risk Level Label ───────────────────────────────────────────
         String riskLevel;
         if      (riskScore >= 85) riskLevel = "🔴 CRITICAL";
-        else if (riskScore >= 60) riskLevel = "🟠 HIGH";
-        else if (riskScore >= 35) riskLevel = "🟡 MEDIUM";
+        else if (riskScore >= 65) riskLevel = "🟠 HIGH";
+        else if (riskScore >= 40) riskLevel = "🟡 MEDIUM";
         else                      riskLevel = "🟢 SAFE";
 
-        // ── Step 5: Smart Recommendation ─────────────────────
-        // Optimal capacity = current properties + 25% growth buffer
-        int recommended = (int) Math.ceil(currentCount * 1.25);
-        if (recommended < 10) recommended = 10; // minimum floor
+        // ── Step 5: Smart Recommendation ──────────────────────────────────────
+        // Rule 1: Always keep at least a 35% growth buffer above current count.
+        // Rule 2: NEVER recommend going below the current limit (don't suggest
+        //         shrinking a sector that is already functioning).
+        //
+        // Example: count=100, limit=150 → ceil(100×1.35)=135, max(150,135)=150
+        //   → recommends keeping at 150, not reducing to 135.
+        //
+        // Example: count=140, limit=150 → ceil(140×1.35)=189, max(150,189)=189
+        //   → recommends increasing to 189 because sector is getting full.
+        int recommended = (int) Math.ceil(currentCount * 1.35);
+        if (recommended < 10) recommended = 10; // absolute minimum floor
+        // Do not recommend reducing below current limit
+        if (recommended < currentLimit) recommended = currentLimit;
 
-        // ── Step 6: Advisory message ──────────────────────────
+        // ── Step 6: Advisory text ──────────────────────────────────────────────
+        boolean isReducing  = proposedCapacity < currentLimit;
+        int     slotsLeft   = proposedCapacity - currentCount;
+        double  headroomPct = proposedCapacity > 0
+                ? (slotsLeft * 100.0) / proposedCapacity : 0;
+
         StringBuilder advice = new StringBuilder();
         advice.append(String.format(
-            "📊 Current: %d/%d (%.1f%% full)\n", currentCount, currentLimit, currentUsagePct));
+            "📊 Current:       %d / %d slots used (%.1f%% full)\n",
+            currentCount, currentLimit, currentUsagePct));
         advice.append(String.format(
-            "📈 After change: %d/%d (%.1f%% full)\n", currentCount, proposedCapacity, proposedUsagePct));
+            "📦 Proposed:      %d / %d slots used (%.1f%% full)\n",
+            currentCount, proposedCapacity, proposedUsagePct));
         advice.append(String.format(
-            "⚠️  Risk Score: %d/100 — %s\n", riskScore, riskLevel));
+            "🪟 Headroom left: %d slots (%.1f%% free)\n",
+            Math.max(0, slotsLeft), Math.max(0, headroomPct)));
         advice.append(String.format(
-            "💡 Recommended safe capacity: %d (25%% growth buffer)\n", recommended));
+            "⚠️  Risk Score:    %d / 100 — %s\n", riskScore, riskLevel));
+        advice.append(String.format(
+            "💡 Recommended:   %d slots (35%% growth buffer, never below current)\n\n",
+            recommended));
 
+        // Context-specific warnings
         if (proposedCapacity < currentCount) {
-            advice.append("❌ WARNING: Proposed capacity is BELOW current property count! Sector will be immediately overloaded.\n");
-        } else if (proposedUsagePct >= 90) {
-            advice.append("⚠️  WARNING: Sector will be nearly full. Consider setting higher capacity.\n");
+            advice.append("❌ OVERLOAD: Proposed limit is BELOW current property count!\n");
+            advice.append("   The sector will be immediately over-capacity.\n");
+        } else if (isReducing && proposedUsagePct >= 80) {
+            advice.append("🔴 CRITICAL: You are REDUCING capacity on a sector that is already\n");
+            advice.append("   " + String.format("%.0f%%", currentUsagePct) + " full. After this change it will be ");
+            advice.append(String.format("%.0f%%", proposedUsagePct) + "% full, leaving only " + slotsLeft + " slot(s).\n");
+            advice.append("   Apply the recommended capacity of " + recommended + " instead.\n");
+        } else if (isReducing && proposedUsagePct >= 60) {
+            advice.append("🟠 HIGH: Reducing capacity will leave very little headroom.\n");
+            advice.append("   Consider keeping at " + currentLimit + " or using recommended: " + recommended + ".\n");
+        } else if (isReducing) {
+            advice.append("🟡 Reducing capacity. Headroom remains acceptable (" + String.format("%.0f%%", headroomPct) + " free).\n");
+        } else if (proposedUsagePct >= 80) {
+            advice.append("🔴 WARNING: Even without reducing, this limit leaves only\n");
+            advice.append("   " + slotsLeft + " slot(s). Consider the recommended capacity of " + recommended + ".\n");
         } else if (proposedCapacity > currentLimit * 2) {
-            advice.append("ℹ️  NOTE: Large capacity increase detected. Verify this is intentional.\n");
+            advice.append("ℹ️  Large increase detected (more than double current limit).\n");
+            advice.append("   Verify this is intentional.\n");
         } else {
-            advice.append("✅ Proposed capacity is within safe range.\n");
+            advice.append("✅ Proposed capacity provides " + String.format("%.0f%%", headroomPct) + "% headroom. Safe to proceed.\n");
         }
 
         return new CapacityAdvisory(
@@ -160,6 +223,7 @@ public class SectorService {
             sector.getSectorName()
         );
     }
+
 
     /**
      * Result class for Smart Capacity Advisor (NON-CRUD output)
@@ -226,22 +290,31 @@ public class SectorService {
         }
 
         // Step 2: Count & value active listings in this sector (NON-CRUD query)
-        int[] listingData = propertyRepository.countAndValueActiveListingsBySector(sectorId);
-        int blockedListings   = listingData[0];
-        BigDecimal blockedValue = new BigDecimal(listingData[1]);
+        double[] listingData = propertyRepository.countAndValueActiveListingsBySector(sectorId);
+        int blockedListings   = (int) listingData[0];
+
+        // ── NEW LOGIC: Impact is based on WASTED SPACE (Lost Potential Revenue) ──
+        // "more empty space = more amount lost"
+        int capacity = sector.getCapacityLimit();
+        int used = sector.getCurrentPropertyCount();
+        int wastedSlots = Math.max(0, capacity - used);
+        
+        // Calculate lost potential revenue based on wasted slots.
+        // Assuming average 2.5 Crore (25,000,000 PKR) potential per empty slot.
+        double lostPotentialValue = wastedSlots * 25_000_000.0;
+        BigDecimal blockedValue = BigDecimal.valueOf(lostPotentialValue);
 
         // Step 3: Count active bidding sessions on this sector's properties (NON-CRUD)
         int affectedBidSessions = propertyRepository.countActiveBiddingSessionsBySector(sectorId);
 
         // Step 4: Severity scoring formula
-        // Factors: number of blocked listings, value tier, active auctions
         int severityScore = 0;
         if (blockedListings > 20)  severityScore += 40;
         else if (blockedListings > 10) severityScore += 25;
         else if (blockedListings > 5)  severityScore += 15;
         else if (blockedListings > 0)  severityScore += 5;
 
-        // Value scoring (PKR tiers)
+        // Value scoring (PKR tiers - based on Millions of lost potential)
         double valueMillion = blockedValue.doubleValue() / 1_000_000.0;
         if (valueMillion > 500)       severityScore += 40;
         else if (valueMillion > 100)  severityScore += 25;
@@ -252,6 +325,16 @@ public class SectorService {
         severityScore += affectedBidSessions * 10;
         severityScore = Math.min(100, severityScore);
 
+        // Formatting PKR logically into Crores/Lakhs
+        String formattedValue;
+        if (lostPotentialValue >= 10_000_000) {
+            formattedValue = String.format("PKR %.2f Crore", lostPotentialValue / 10_000_000.0);
+        } else if (lostPotentialValue >= 100_000) {
+            formattedValue = String.format("PKR %.2f Lakh", lostPotentialValue / 100_000.0);
+        } else {
+            formattedValue = String.format("PKR %,.0f", lostPotentialValue);
+        }
+
         // Step 5: Severity label
         String severity;
         if      (severityScore >= 75) severity = "🔴 SEVERE";
@@ -261,17 +344,19 @@ public class SectorService {
 
         // Step 6: Impact report text
         boolean isOverloaded = sector.isOverloaded();
-        double usagePct = sector.getCapacityLimit() > 0
-            ? (sector.getCurrentPropertyCount() * 100.0) / sector.getCapacityLimit() : 0;
+        double usagePct = capacity > 0 ? (used * 100.0) / capacity : 0;
 
         StringBuilder report = new StringBuilder();
         report.append(String.format("🏘️  Sector: %s\n", sector.getSectorName()));
-        report.append(String.format("📊 Current Usage: %d/%d (%.1f%%)\n",
-            sector.getCurrentPropertyCount(), sector.getCapacityLimit(), usagePct));
+        report.append(String.format("📊 Current Usage: %d/%d (%.1f%%)\n", used, capacity, usagePct));
         report.append(String.format("⚠️  Overloaded: %s\n", isOverloaded ? "YES" : "NO"));
         report.append("\n── FREEZE IMPACT ──\n");
         report.append(String.format("🚫 Listings to be BLOCKED: %d\n", blockedListings));
-        report.append(String.format("💰 Total Value at Risk: PKR %.1fM\n", valueMillion));
+        
+        // Replaced "Total Value at Risk" with "Lost Potential Revenue"
+        report.append(String.format("💰 Lost Potential Revenue: %s\n", formattedValue));
+        report.append(String.format("   (Calculated based on %d empty slots × 2.5 Crore avg market value)\n", wastedSlots));
+        
         report.append(String.format("🔨 Active Auctions Affected: %d\n", affectedBidSessions));
         report.append(String.format("📈 Impact Severity: %d/100 — %s\n", severityScore, severity));
 
