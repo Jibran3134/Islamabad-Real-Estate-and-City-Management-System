@@ -102,6 +102,57 @@ public class PropertySearchViewController implements Initializable {
             }
         });
 
+        // Click-to-expand text cell factory for long content
+        javafx.util.Callback<TableColumn<Property, String>, TableCell<Property, String>> textCellFactory = column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setOnMouseClicked(null);
+                } else {
+                    setText(item);
+                    setOnMouseClicked(e -> {
+                        if (e.getClickCount() == 1) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Detailed Information");
+                            alert.setHeaderText(null);
+                            TextArea area = new TextArea(item);
+                            area.setWrapText(true);
+                            area.setEditable(false);
+                            area.setPrefRowCount(4);
+                            alert.getDialogPane().setContent(area);
+                            alert.showAndWait();
+                        }
+                    });
+                }
+            }
+        };
+
+        colTitle.setCellFactory(textCellFactory);
+        colLocation.setCellFactory(textCellFactory);
+        colType.setCellFactory(textCellFactory);
+
+        colSector.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer sectorId, boolean empty) {
+                super.updateItem(sectorId, empty);
+                if (empty || sectorId == null || sectorId == 0) { setText(null); return; }
+                String sectorName = "Sector " + sectorId;
+                if (sectors != null) {
+                    for (Sector s : sectors) {
+                        if (s.getSectorId() == sectorId) {
+                            sectorName = s.getSectorName();
+                            break;
+                        }
+                    }
+                }
+                setText(sectorName);
+                setAlignment(Pos.CENTER);
+            }
+        });
+
         // Color-coded score
         colScore.setCellFactory(col -> new TableCell<>() {
             @Override
@@ -120,11 +171,18 @@ public class PropertySearchViewController implements Initializable {
 
     private void loadSectors() {
         try {
-            sectors = sectorController.getAllSectors();
+            List<Sector> allSectors = sectorController.getAllSectors();
+            sectors = new java.util.ArrayList<>();
+            
             sectorCombo.getItems().clear();
             sectorCombo.getItems().add("All Sectors");
-            for (Sector s : sectors) {
-                sectorCombo.getItems().add(s.getSectorName() + " (ID: " + s.getSectorId() + ")");
+            for (Sector s : allSectors) {
+                String name = s.getSectorName().toUpperCase();
+                // Filter only Islamabad sectors (F, G, I, H series, etc., no DHA, no Bahria)
+                if (!name.contains("DHA") && !name.contains("BAHRIA") && !name.contains("TOWN") && !name.contains("ENCLAVE")) {
+                    sectors.add(s);
+                    sectorCombo.getItems().add(s.getSectorName());
+                }
             }
             sectorCombo.getSelectionModel().selectFirst();
         } catch (SQLException e) {
@@ -201,7 +259,7 @@ public class PropertySearchViewController implements Initializable {
     private void displayResults(SearchResult result) {
         if (result.isSuccess()) {
             resultsTable.setItems(FXCollections.observableArrayList(result.getProperties()));
-            resultsLabel.setText(result.getMessage() + "  (Search time: " + result.getSearchTimeMs() + "ms)");
+            resultsLabel.setText(result.getMessage());
             addMessage("[SUCCESS] " + result.getMessage());
 
             // Top result info

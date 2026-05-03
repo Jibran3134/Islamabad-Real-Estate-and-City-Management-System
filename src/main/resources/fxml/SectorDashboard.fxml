@@ -86,9 +86,16 @@
                                style="-fx-text-fill: #888888; -fx-font-size: 13px;"/>
                     </VBox>
 
-                    <TextArea fx:id="impactTextArea" editable="false" prefHeight="160"
-                              promptText="Select a sector row or click 'Analyze Impact' to see:&#10;• Number of listings that will be blocked&#10;• Total PKR value at risk&#10;• Active auctions disrupted&#10;• Severity score (0-100)"
-                              style="-fx-background-color: #1A1A1A; -fx-text-fill: #CCCCCC; -fx-border-color: #333333; -fx-font-size: 12px; -fx-background-radius: 8;"/>
+                    <HBox spacing="15">
+                        <TextArea fx:id="impactTextArea" editable="false" prefHeight="160" prefWidth="280"
+                                  promptText="Select a sector row or click 'Analyze Impact' to see:&#10;• Total PKR value at risk&#10;• Severity score (0-100)"
+                                  style="-fx-control-inner-background: #FFFFFF; -fx-text-fill: #000000; -fx-font-weight: bold; -fx-border-color: #333333; -fx-font-size: 13px; -fx-background-radius: 8;" HBox.hgrow="ALWAYS"/>
+                        
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label text="Frozen Space Impact" style="-fx-text-fill: #888888; -fx-font-size: 11px;"/>
+                            <javafx.scene.chart.PieChart fx:id="impactPieChart" prefHeight="150" prefWidth="180" legendSide="BOTTOM" labelsVisible="false" styleClass="chart"/>
+                        </VBox>
+                    </HBox>
                 </VBox>
             </HBox>
 

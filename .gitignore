@@ -43,6 +43,9 @@ target/
 
 ### Local Maven config ###
 .mvn/
+!.mvn/
+!.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.properties
 maven.config
 jvm.config
 settings.xml

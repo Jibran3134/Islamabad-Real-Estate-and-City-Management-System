@@ -564,3 +564,94 @@
     -fx-text-fill: #FF4757;
     -fx-font-weight: bold;
 }
+
+/* ═══════════════════════════════════════════
+   CHARTS — Dark theme for PieChart & BarChart
+   ═══════════════════════════════════════════ */
+
+/* Chart background & plot area */
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.chart-plot-background {
+    -fx-background-color: #0D0D0D;
+    -fx-background-radius: 8;
+}
+
+.chart-content {
+    -fx-background-color: transparent;
+}
+
+/* Axis labels & tick marks */
+.axis {
+    -fx-tick-label-fill: #AAAAAA;
+    -fx-tick-mark-visible: true;
+}
+
+.axis-label {
+    -fx-text-fill: #888888;
+    -fx-font-size: 11px;
+}
+
+/* Chart legend */
+.chart-legend {
+    -fx-background-color: #1A1A1A;
+    -fx-background-radius: 6;
+    -fx-padding: 4 10;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #CCCCCC;
+    -fx-font-size: 11px;
+}
+
+/* BarChart bars — gold = Capacity Limit, purple = Properties Listed */
+.default-color0.chart-bar { -fx-bar-fill: #D4AF37; }
+.default-color1.chart-bar { -fx-bar-fill: #A29BFE; }
+.default-color2.chart-bar { -fx-bar-fill: #2ED573; }
+.default-color3.chart-bar { -fx-bar-fill: #FF6B35; }
+
+/* Legend symbols — must match bar colors exactly */
+.default-color0.chart-legend-item-symbol { -fx-background-color: #D4AF37; }
+.default-color1.chart-legend-item-symbol { -fx-background-color: #A29BFE; }
+.default-color2.chart-legend-item-symbol { -fx-background-color: #2ED573; }
+.default-color3.chart-legend-item-symbol { -fx-background-color: #FF6B35; }
+
+/* PieChart legend symbols */
+.default-color0.chart-pie-legend-symbol { -fx-background-color: #D4AF37; }
+.default-color1.chart-pie-legend-symbol { -fx-background-color: #2ED573; }
+
+/* Bar hover */
+.chart-bar:hover {
+    -fx-opacity: 0.82;
+}
+
+/* PieChart slices — gold (used) + green (free) */
+.default-color0.chart-pie { -fx-pie-color: #D4AF37; }
+.default-color1.chart-pie { -fx-pie-color: #2ED573; }
+.default-color2.chart-pie { -fx-pie-color: #FF4757; }
+.default-color3.chart-pie { -fx-pie-color: #A29BFE; }
+
+/* PieChart label */
+.chart-pie-label {
+    -fx-fill: #CCCCCC;
+    -fx-font-size: 11px;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #555555;
+}
+
+/* Grid lines */
+.chart-vertical-grid-lines {
+    -fx-stroke: #2A2A2A;
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: #2A2A2A;
+}
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+}
+

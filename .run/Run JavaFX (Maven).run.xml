@@ -4,7 +4,7 @@
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings">
         <MavenRunnerSettings>
-          <option name="jreName" value="openjdk-26" />
+          <option name="jreName" value="25" />
         </MavenRunnerSettings>
       </option>
       <option name="myRunnerParameters">
